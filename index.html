@@ -1,0 +1,408 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CHRONOS — Relógios de Alta Relojoaria</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400&family=Montserrat:wght@200;300;400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+
+</head>
+<body>
+
+<div class="cursor" id="cursor"></div>
+<div class="cursor-ring" id="cursorRing"></div>
+
+<!-- TOAST -->
+<div class="toast" id="toast">
+  <span class="toast-icon">✓</span>
+  <span class="toast-text" id="toastText">Produto adicionado ao carrinho</span>
+</div>
+
+<!-- MOBILE MENU -->
+<div class="mobile-menu" id="mobileMenu">
+  <button class="close-menu" onclick="closeMobileMenu()">✕</button>
+  <a onclick="navigate('home');closeMobileMenu()">Início</a>
+  <a onclick="navigate('catalog');closeMobileMenu()">Coleção</a>
+  <a onclick="navigate('about');closeMobileMenu()">A Marca</a>
+  <a onclick="navigate('contact');closeMobileMenu()">Contato</a>
+  <a onclick="navigate('policies');closeMobileMenu()">Políticas</a>
+  <a onclick="navigate('cart');closeMobileMenu()">Carrinho</a>
+</div>
+
+<!-- NAV -->
+<nav id="mainNav">
+  <div class="nav-logo" onclick="navigate('home')">CHRONOS<span>.</span></div>
+  <ul class="nav-links">
+    <li><a onclick="navigate('home')">Início</a></li>
+    <li><a onclick="navigate('catalog')">Coleção</a></li>
+    <li><a onclick="navigate('about')">A Marca</a></li>
+    <li><a onclick="navigate('contact')">Contato</a></li>
+    <li><a onclick="navigate('policies')">Políticas</a></li>
+  </ul>
+  <div style="display:flex;align-items:center;gap:24px">
+    <div class="nav-cart" onclick="navigate('cart')">
+      <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.2" viewBox="0 0 24 24"><path d="M6 2 3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 01-8 0"/></svg>
+      <span>Carrinho</span>
+      <div class="cart-count" id="cartCount">0</div>
+    </div>
+    <div class="hamburger" onclick="openMobileMenu()">
+      <span></span><span></span><span></span>
+    </div>
+  </div>
+</nav>
+
+<!-- ═══════════════════════════════ HOME ═══════════════════════════════ -->
+<div class="page active" id="page-home">
+  <section class="hero">
+    <div class="hero-bg"></div>
+    <div class="hero-img"></div>
+    <div class="hero-noise"></div>
+    <div class="hero-content">
+      <p class="hero-eyebrow">Alta Relojoaria — Desde 1987</p>
+      <h1 class="hero-title">O tempo em sua<br><em>forma mais precisa.</em></h1>
+      <p class="hero-sub">Maestria suíça. Design atemporal. Exclusividade absoluta.</p>
+      <div class="hero-cta">
+        <button class="btn-primary" onclick="navigate('catalog')"><span>Ver Coleção</span></button>
+      </div>
+    </div>
+    <div class="hero-scroll">
+      <div class="scroll-line"></div>
+      <span>Rolar</span>
+    </div>
+  </section>
+
+  <div class="marquee-section">
+    <div class="marquee-track" id="marqueeTrack">
+      <span class="marquee-item">Alta Relojoaria</span><span class="marquee-dot">◆</span>
+      <span class="marquee-item">Movimento Suíço</span><span class="marquee-dot">◆</span>
+      <span class="marquee-item">Design Exclusivo</span><span class="marquee-dot">◆</span>
+      <span class="marquee-item">Precisão Absoluta</span><span class="marquee-dot">◆</span>
+      <span class="marquee-item">Craftmanship</span><span class="marquee-dot">◆</span>
+      <span class="marquee-item">Edição Limitada</span><span class="marquee-dot">◆</span>
+      <span class="marquee-item">Garantia Vitalícia</span><span class="marquee-dot">◆</span>
+      <span class="marquee-item">Alta Relojoaria</span><span class="marquee-dot">◆</span>
+      <span class="marquee-item">Movimento Suíço</span><span class="marquee-dot">◆</span>
+      <span class="marquee-item">Design Exclusivo</span><span class="marquee-dot">◆</span>
+      <span class="marquee-item">Precisão Absoluta</span><span class="marquee-dot">◆</span>
+      <span class="marquee-item">Craftmanship</span><span class="marquee-dot">◆</span>
+      <span class="marquee-item">Edição Limitada</span><span class="marquee-dot">◆</span>
+      <span class="marquee-item">Garantia Vitalícia</span><span class="marquee-dot">◆</span>
+    </div>
+  </div>
+
+  <section class="features-section">
+    <p class="section-label reveal">Nossa Filosofia</p>
+    <h2 class="section-title reveal">Cada detalhe,<br><em>uma declaração.</em></h2>
+    <div class="features-grid">
+      <div class="feature-card reveal reveal-delay-1">
+        <div class="feature-num">01</div>
+        <h3 class="feature-title">Precisão Suíça</h3>
+        <p class="feature-text">Cada mecanismo é calibrado à mão por relojoeiros certificados. Tolerâncias medidas em mícrons, não milímetros. O resultado é um relógio que dura gerações.</p>
+      </div>
+      <div class="feature-card reveal reveal-delay-2">
+        <div class="feature-num">02</div>
+        <h3 class="feature-title">Design Atemporal</h3>
+        <p class="feature-text">Linhas limpas que transcendem tendências. Cada CHRONOS é um objeto de arte funcional, concebido para ser igualmente magnífico em 2024 ou em 2074.</p>
+      </div>
+      <div class="feature-card reveal reveal-delay-3">
+        <div class="feature-num">03</div>
+        <h3 class="feature-title">Materiais Raros</h3>
+        <p class="feature-text">Safira sintética de grau aeroespacial, titânio de aviação, couro de aligátor certificado. Apenas os materiais que resistem ao julgamento do tempo.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="featured-section">
+    <p class="section-label reveal">Destaques da Coleção</p>
+    <h2 class="section-title reveal">Peças <em>icônicas.</em></h2>
+    <div class="featured-split">
+      <div class="featured-img-wrap reveal" onclick="openProduct(0)">
+        <img src="https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=900&q=80" alt="Chronos Noir">
+        <div class="featured-overlay">
+          <p class="featured-tag">Mais Vendido</p>
+          <h3 class="featured-name">Chronos Noir</h3>
+          <p class="featured-price">R$ 28.500</p>
+        </div>
+      </div>
+      <div style="display:grid;grid-template-rows:1fr 1fr;gap:2px">
+        <div class="featured-img-wrap reveal reveal-delay-1" onclick="openProduct(1)">
+          <img src="https://images.unsplash.com/photo-1547996160-81dfa63595aa?w=900&q=80" alt="Atelier Blanc">
+          <div class="featured-overlay">
+            <p class="featured-tag">Novo</p>
+            <h3 class="featured-name" style="font-size:26px">Atelier Blanc</h3>
+            <p class="featured-price">R$ 34.900</p>
+          </div>
+        </div>
+        <div class="featured-img-wrap reveal reveal-delay-2" onclick="openProduct(2)">
+          <img src="https://images.unsplash.com/photo-1612817288484-6f916006741a?w=900&q=80" alt="Grand Complication">
+          <div class="featured-overlay">
+            <p class="featured-tag">Edição Limitada</p>
+            <h3 class="featured-name" style="font-size:26px">Grand Complication</h3>
+            <p class="featured-price">R$ 89.000</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div style="border-top:1px solid var(--line);padding:120px 60px;text-align:center;background:var(--deep)">
+    <p class="section-label reveal">Excelência em números</p>
+    <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:40px;max-width:900px;margin:60px auto 0">
+      <div class="reveal">
+        <div style="font-family:var(--font-serif);font-size:64px;font-weight:300;color:var(--gold);line-height:1">37</div>
+        <div style="font-size:9px;letter-spacing:3px;text-transform:uppercase;color:var(--muted);margin-top:8px">Anos de Tradição</div>
+      </div>
+      <div class="reveal reveal-delay-1">
+        <div style="font-family:var(--font-serif);font-size:64px;font-weight:300;color:var(--gold);line-height:1">12</div>
+        <div style="font-size:9px;letter-spacing:3px;text-transform:uppercase;color:var(--muted);margin-top:8px">Coleções Exclusivas</div>
+      </div>
+      <div class="reveal reveal-delay-2">
+        <div style="font-family:var(--font-serif);font-size:64px;font-weight:300;color:var(--gold);line-height:1">500</div>
+        <div style="font-size:9px;letter-spacing:3px;text-transform:uppercase;color:var(--muted);margin-top:8px">Peças por Ano</div>
+      </div>
+      <div class="reveal reveal-delay-3">
+        <div style="font-family:var(--font-serif);font-size:64px;font-weight:300;color:var(--gold);line-height:1">∞</div>
+        <div style="font-size:9px;letter-spacing:3px;text-transform:uppercase;color:var(--muted);margin-top:8px">Garantia Vitalícia</div>
+      </div>
+    </div>
+  </div>
+
+  <div id="footer-home"></div>
+</div>
+
+<!-- ═══════════════════════════════ CATALOG ═══════════════════════════════ -->
+<div class="page" id="page-catalog">
+  <div class="catalog-hero">
+    <div>
+      <p style="font-size:9px;letter-spacing:5px;text-transform:uppercase;color:var(--gold);margin-bottom:16px">Chronos Manufacture</p>
+      <h1>A <em>Coleção</em></h1>
+    </div>
+  </div>
+  <div class="catalog-filters">
+    <button class="filter-btn active" data-filter="all">Todos</button>
+    <button class="filter-btn" data-filter="automatico">Automático</button>
+    <button class="filter-btn" data-filter="cronografo">Cronógrafo</button>
+    <button class="filter-btn" data-filter="complication">Grande Complicação</button>
+  </div>
+  <div class="catalog-grid" id="catalogGrid"></div>
+  <div id="footer-catalog"></div>
+</div>
+
+<!-- ═══════════════════════════════ PRODUCT ═══════════════════════════════ -->
+<div class="page" id="page-product">
+  <div class="product-page">
+    <div class="product-layout">
+      <div class="product-gallery">
+        <div class="gallery-main">
+          <img id="mainProductImg" src="" alt="">
+        </div>
+        <div class="gallery-thumbs" id="galleryThumbs"></div>
+      </div>
+      <div class="product-details">
+        <p class="product-breadcrumb" onclick="navigate('catalog')">← <span>Coleção</span> / <span id="breadcrumbName"></span></p>
+        <p class="product-collection-label" id="productCollection"></p>
+        <h1 class="product-title" id="productTitle"></h1>
+        <p class="product-ref-detail" id="productRef"></p>
+        <div class="product-rating">
+          <span class="stars">★★★★★</span>
+          <span class="rating-count">4.9 · 47 avaliações</span>
+        </div>
+        <div class="product-price-detail" id="productPrice"></div>
+        <p class="product-installment" id="productInstall"></p>
+        <blockquote class="product-tagline" id="productTagline"></blockquote>
+        <div class="product-variants">
+          <p class="variants-label">Pulseira</p>
+          <div class="variants-options">
+            <button class="variant-btn active">Couro</button>
+            <button class="variant-btn">Aço</button>
+            <button class="variant-btn">Borracha</button>
+          </div>
+        </div>
+        <button class="add-to-cart-btn" id="addToCartBtn">Adicionar ao Carrinho</button>
+        <button class="wishlist-btn">♡ Adicionar à Lista de Desejos</button>
+        <div class="product-benefits">
+          <div class="benefit-item"><span class="benefit-icon">◈</span><div><p class="benefit-title">Garantia Vitalícia</p><p class="benefit-text">Cobertura completa para toda a vida útil</p></div></div>
+          <div class="benefit-item"><span class="benefit-icon">◈</span><div><p class="benefit-title">Frete Expresso</p><p class="benefit-text">Entrega em 3 dias úteis, grátis</p></div></div>
+          <div class="benefit-item"><span class="benefit-icon">◈</span><div><p class="benefit-title">Pagamento Seguro</p><p class="benefit-text">Criptografia SSL 256-bit</p></div></div>
+          <div class="benefit-item"><span class="benefit-icon">◈</span><div><p class="benefit-title">Troca Fácil</p><p class="benefit-text">30 dias para troca ou devolução</p></div></div>
+        </div>
+        <div class="specs-section">
+          <p class="specs-title">Especificações Técnicas</p>
+          <div class="specs-grid" id="specsGrid"></div>
+        </div>
+        <div class="reviews-section">
+          <p class="specs-title">Avaliações dos Clientes</p>
+          <div id="reviewsContainer"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div id="footer-product"></div>
+</div>
+
+<!-- ═══════════════════════════════ CART ═══════════════════════════════ -->
+<div class="page" id="page-cart">
+  <div class="cart-page">
+    <div class="cart-header">
+      <h1>Carrinho</h1>
+      <span class="cart-count-label" id="cartItemCount">0 itens</span>
+    </div>
+    <div id="cartContent"></div>
+  </div>
+  <div id="footer-cart"></div>
+</div>
+
+<!-- ═══════════════════════════════ CHECKOUT ═══════════════════════════════ -->
+<div class="page" id="page-checkout">
+  <div class="checkout-page" id="checkoutContent"></div>
+  <div id="footer-checkout"></div>
+</div>
+
+<!-- ═══════════════════════════════ ABOUT ═══════════════════════════════ -->
+<div class="page" id="page-about">
+  <div class="about-hero">
+    <div class="about-hero-bg"></div>
+    <div class="about-hero-overlay"></div>
+    <div class="about-hero-content">
+      <h1>A Arte do<br><em>Tempo Perfeito.</em></h1>
+    </div>
+  </div>
+  <div class="about-content">
+    <div class="about-intro reveal">
+      <div class="about-year">1987</div>
+      <div class="about-text">
+        <p>CHRONOS nasceu de uma obsessão: criar relógios que fossem simultaneamente instrumentos de precisão e obras de arte.</p>
+        <p>Fundada em Genebra, nossa maison reuniu os mais talentosos relojoeiros suíços com designers de vanguarda. O resultado é uma linha de peças que desafia as convenções do mercado de luxo.</p>
+        <p>Cada CHRONOS é montado manualmente por um único mestre relojoeiro, que assina o interior da caixa. Uma tradição que mantemos desde o primeiro dia.</p>
+        <p>Produzimos apenas 500 peças por ano. Não por limitação, mas por princípio. A exclusividade não é um argumento de marketing — é uma consequência natural do nosso compromisso com a perfeição.</p>
+      </div>
+    </div>
+    <div class="about-values">
+      <div class="about-value reveal">
+        <div class="about-value-icon">◈</div>
+        <h3 class="about-value-title">Precisão</h3>
+        <p class="about-value-text">Tolerâncias de ±0.3 segundos por dia. A física como arte.</p>
+      </div>
+      <div class="about-value reveal reveal-delay-1">
+        <div class="about-value-icon">◈</div>
+        <h3 class="about-value-title">Design</h3>
+        <p class="about-value-text">Linha limpa. Proporção áurea. Elegância que não envelhece.</p>
+      </div>
+      <div class="about-value reveal reveal-delay-2">
+        <div class="about-value-icon">◈</div>
+        <h3 class="about-value-title">Qualidade</h3>
+        <p class="about-value-text">Apenas materiais de grau aeroespacial. Sem compromissos.</p>
+      </div>
+      <div class="about-value reveal reveal-delay-3">
+        <div class="about-value-icon">◈</div>
+        <h3 class="about-value-title">Exclusividade</h3>
+        <p class="about-value-text">500 peças por ano. O seu CHRONOS é verdadeiramente único.</p>
+      </div>
+    </div>
+  </div>
+  <div id="footer-about"></div>
+</div>
+
+<!-- ═══════════════════════════════ POLICIES ═══════════════════════════════ -->
+<div class="page" id="page-policies">
+  <div class="policies-page">
+    <div class="policies-tabs">
+      <button class="policy-tab active" onclick="switchPolicy('exchange',this)">Política de Troca</button>
+      <button class="policy-tab" onclick="switchPolicy('privacy',this)">Privacidade</button>
+    </div>
+    <div class="policy-content active" id="policy-exchange">
+      <h2>Política de Troca<br>e Devolução</h2>
+      <h3>Prazo para Troca</h3>
+      <p>CHRONOS oferece 30 dias corridos para solicitação de troca ou devolução a partir da data de recebimento do produto. O relógio deve estar em perfeitas condições, com todos os itens originais: caixa, certificado de autenticidade, garantia e manual.</p>
+      <h3>Condições Aceitas</h3>
+      <p>Aceitamos trocas por defeito de fabricação, divergência com o produto anunciado ou arrependimento de compra. O produto não deve apresentar sinais de uso, arranhões ou danos causados pelo cliente.</p>
+      <h3>Processo de Devolução</h3>
+      <p>Para iniciar o processo, entre em contato com nossa equipe pelo e-mail atendimento@chronos.com.br ou pelo telefone +55 11 3040-7000. Enviaremos uma etiqueta de coleta sem custo adicional ao cliente.</p>
+      <h3>Reembolso</h3>
+      <p>O reembolso será processado em até 10 dias úteis após o recebimento e inspeção do produto. Para compras no cartão de crédito, o estorno pode levar até 2 faturas, dependendo da operadora.</p>
+      <h3>Garantia</h3>
+      <p>Todos os relógios CHRONOS possuem garantia vitalícia contra defeitos de fabricação. Essa garantia cobre o movimento, a caixa e a resistência à água conforme especificado. Danos por impacto, mau uso ou intervenção de terceiros não autorizados estão excluídos da garantia.</p>
+    </div>
+    <div class="policy-content" id="policy-privacy">
+      <h2>Política de<br>Privacidade</h2>
+      <h3>Coleta de Dados</h3>
+      <p>Coletamos apenas os dados estritamente necessários para processar sua compra e oferecer a melhor experiência possível: nome, endereço de entrega, e-mail e dados de pagamento (processados com criptografia SSL 256-bit).</p>
+      <h3>Uso das Informações</h3>
+      <p>Suas informações são utilizadas exclusivamente para processamento de pedidos, comunicação sobre o status de entrega e, com seu consentimento, envio de informações sobre novas coleções e eventos exclusivos CHRONOS.</p>
+      <h3>Compartilhamento</h3>
+      <p>Não vendemos, alugamos ou compartilhamos seus dados com terceiros para fins comerciais. Compartilhamos informações apenas com parceiros logísticos necessários para a entrega dos produtos.</p>
+      <h3>Seus Direitos (LGPD)</h3>
+      <p>Em conformidade com a Lei Geral de Proteção de Dados (LGPD), você tem direito a acessar, corrigir, excluir ou exportar seus dados a qualquer momento. Para exercer esses direitos, entre em contato com privacidade@chronos.com.br.</p>
+      <h3>Cookies</h3>
+      <p>Utilizamos cookies essenciais para o funcionamento do site e cookies analíticos para melhorar a experiência. Você pode gerenciar suas preferências de cookies a qualquer momento nas configurações do navegador.</p>
+    </div>
+  </div>
+  <div id="footer-policies"></div>
+</div>
+
+<!-- ═══════════════════════════════ CONTACT ═══════════════════════════════ -->
+<div class="page" id="page-contact">
+  <div class="contact-page">
+    <div class="contact-layout">
+      <div class="contact-left">
+        <h1>Fale com<br>nossa <em>equipe.</em></h1>
+        <p>Nossa equipe de especialistas está disponível para responder suas dúvidas, auxiliar na escolha do relógio perfeito ou agendar uma visita à nossa boutique.</p>
+        <div class="contact-info">
+          <div class="contact-info-item">
+            <span class="contact-info-label">Boutique</span>
+            <span class="contact-info-val">Av. Paulista, 1374 — São Paulo, SP</span>
+          </div>
+          <div class="contact-info-item">
+            <span class="contact-info-label">Telefone</span>
+            <span class="contact-info-val">+55 (11) 3040-7000</span>
+          </div>
+          <div class="contact-info-item">
+            <span class="contact-info-label">E-mail</span>
+            <span class="contact-info-val">atendimento@chronos.com.br</span>
+          </div>
+          <div class="contact-info-item">
+            <span class="contact-info-label">Horário</span>
+            <span class="contact-info-val">Seg–Sex: 10h às 19h · Sáb: 10h às 16h</span>
+          </div>
+        </div>
+      </div>
+      <form class="contact-form" onsubmit="submitContact(event)">
+        <div class="form-group">
+          <label class="form-label">Nome completo</label>
+          <input type="text" class="form-input" placeholder="Seu nome" required>
+        </div>
+        <div class="form-group">
+          <label class="form-label">E-mail</label>
+          <input type="email" class="form-input" placeholder="seu@email.com" required>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Telefone</label>
+          <input type="tel" class="form-input" placeholder="+55 (11) 00000-0000">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Assunto</label>
+          <select class="form-select">
+            <option>Dúvida sobre produto</option>
+            <option>Pedido em andamento</option>
+            <option>Visita à boutique</option>
+            <option>Assistência técnica</option>
+            <option>Outro</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Mensagem</label>
+          <textarea class="form-input" rows="5" placeholder="Como podemos ajudá-lo?" style="resize:vertical"></textarea>
+        </div>
+        <button class="contact-submit" type="submit"><span>Enviar Mensagem</span></button>
+      </form>
+    </div>
+  </div>
+  <div id="footer-contact"></div>
+</div>
+
+    <script src="script.js"></script>
+
+</body>
+</html>
