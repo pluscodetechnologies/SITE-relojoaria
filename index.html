@@ -1,2146 +1,466 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
+
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
-<title>CHRONOS — Relógios de Alta Relojoaria</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400&family=Jost:wght@200;300;400;500&display=swap" rel="stylesheet">
-<style>
-  /* ===== RESET E VARIÁVEIS ===== */
-  *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
+  <title>CHRONOS — Relógios de Alta Relojoaria</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link
+    href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400&family=Jost:wght@200;300;400;500&display=swap"
+    rel="stylesheet">
+  <link rel="icon"
+    href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>⌚</text></svg>">
 
-  :root {
-    --black: #0a0a0a;
-    --deep: #111111;
-    --graphite: #1c1c1c;
-    --mid: #2a2a2a;
-    --line: #2e2e2e;
-    --muted: #5a5a5a;
-    --silver: #8a8a8a;
-    --light: #c8c8c8;
-    --white: #f0ede8;
-    --gold: #b8996a;
-    --gold-light: #d4b87a;
-    --font-serif: 'Cormorant Garamond', Georgia, serif;
-    --font-sans: 'Jost', sans-serif;
-    --transition: 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-    --transition-fast: 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-  }
 
-  html { scroll-behavior: smooth; }
-  body {
-    background: var(--black);
-    color: var(--light);
-    font-family: var(--font-sans);
-    font-weight: 300;
-    line-height: 1.6;
-    overflow-x: hidden; /* Evita rolagem horizontal indesejada */
-    width: 100%;
-  }
-
-  /* CUSTOM CURSOR — desktop only */
-  @media (pointer: fine) {
-    body { cursor: none; }
-  }
-  .cursor {
-    width: 8px; height: 8px;
-    background: var(--gold);
-    border-radius: 50%;
-    position: fixed; top: 0; left: 0;
-    pointer-events: none;
-    z-index: 9999;
-    transition: transform 0.1s;
-    mix-blend-mode: difference;
-    display: none;
-  }
-  .cursor-ring {
-    width: 36px; height: 36px;
-    border: 1px solid rgba(184,153,106,0.5);
-    border-radius: 50%;
-    position: fixed; top: 0; left: 0;
-    pointer-events: none;
-    z-index: 9998;
-    transition: transform 0.12s ease, width 0.3s, height 0.3s, border-color 0.3s;
-    display: none;
-  }
-  @media (pointer: fine) {
-    .cursor { display: block; }
-    .cursor-ring { display: block; }
-  }
-  .cursor-ring.expand { width: 56px; height: 56px; border-color: var(--gold); }
-
-  /* PAGES */
-  .page { display: none; min-height: 100vh; animation: fadeIn 0.8s ease forwards; }
-  .page.active { display: block; }
-  @keyframes fadeIn { from { opacity: 0; transform: translateY(16px); } to { opacity: 1; transform: translateY(0); } }
-
-  /* NAV */
-  nav {
-    position: fixed; top: 0; left: 0; right: 0; z-index: 1000;
-    padding: 24px 60px;
-    display: flex; align-items: center; justify-content: space-between;
-    background: linear-gradient(to bottom, rgba(10,10,10,0.95) 0%, transparent 100%);
-    backdrop-filter: blur(0px);
-    transition: var(--transition);
-    border-bottom: 1px solid transparent;
-  }
-  nav.scrolled {
-    background: rgba(10,10,10,0.97);
-    backdrop-filter: blur(20px);
-    border-bottom-color: var(--line);
-    padding: 16px 60px;
-  }
-  .nav-logo {
-    font-family: var(--font-serif);
-    font-size: 22px;
-    font-weight: 400;
-    letter-spacing: 6px;
-    color: var(--white);
-    cursor: pointer;
-    text-transform: uppercase;
-  }
-  .nav-logo span { color: var(--gold); }
-  .nav-links { display: flex; gap: 40px; list-style: none; }
-  .nav-links a {
-    font-size: 10px;
-    letter-spacing: 3px;
-    text-transform: uppercase;
-    color: var(--silver);
-    text-decoration: none;
-    cursor: pointer;
-    position: relative;
-    transition: color var(--transition-fast);
-  }
-  .nav-links a::after {
-    content: '';
-    position: absolute; bottom: -4px; left: 0;
-    width: 0; height: 1px;
-    background: var(--gold);
-    transition: width var(--transition);
-  }
-  .nav-links a:hover { color: var(--white); }
-  .nav-links a:hover::after { width: 100%; }
-  .nav-cart {
-    display: flex; align-items: center; gap: 8px;
-    cursor: pointer;
-    font-size: 10px; letter-spacing: 3px;
-    text-transform: uppercase; color: var(--silver);
-    transition: color var(--transition-fast);
-    position: relative;
-  }
-  .nav-cart:hover { color: var(--gold); }
-  .cart-count {
-    background: var(--gold);
-    color: var(--black);
-    width: 18px; height: 18px;
-    border-radius: 50%;
-    font-size: 9px; font-weight: 500;
-    display: flex; align-items: center; justify-content: center;
-    transition: transform 0.3s;
-  }
-  .cart-count.bump { animation: bump 0.4s ease; }
-  @keyframes bump { 0%,100%{transform:scale(1)} 50%{transform:scale(1.4)} }
-  .hamburger { display: none; flex-direction: column; gap: 5px; cursor: pointer; }
-  .hamburger span { width: 24px; height: 1px; background: var(--silver); transition: var(--transition-fast); }
-
-  /* ===== HOME ===== */
-  .hero {
-    height: 100vh;
-    position: relative;
-    display: flex; align-items: center; justify-content: center;
-    overflow: hidden;
-  }
-  .hero-bg {
-    position: absolute; inset: 0;
-    background:
-      radial-gradient(ellipse at 30% 50%, rgba(184,153,106,0.06) 0%, transparent 60%),
-      radial-gradient(ellipse at 80% 20%, rgba(184,153,106,0.04) 0%, transparent 50%),
-      linear-gradient(135deg, #0a0a0a 0%, #111111 40%, #0d0d0d 100%);
-  }
-  .hero-img {
-    position: absolute; inset: 0;
-    background: url('https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=1800&q=80') center/cover no-repeat;
-    opacity: 0.12;
-    filter: grayscale(40%);
-  }
-  .hero-noise {
-    position: absolute; inset: 0;
-    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E");
-    opacity: 0.4;
-    pointer-events: none;
-  }
-  .hero-content {
-    position: relative; z-index: 2;
-    text-align: center;
-    max-width: 800px; padding: 0 40px;
-  }
-  .hero-eyebrow {
-    font-size: 10px; letter-spacing: 6px; text-transform: uppercase;
-    color: var(--gold); margin-bottom: 32px;
-    opacity: 0; animation: slideUp 1s ease 0.3s forwards;
-  }
-  .hero-title {
-    font-family: var(--font-serif);
-    font-size: clamp(52px, 8vw, 100px);
-    font-weight: 300;
-    line-height: 1.0;
-    color: var(--white);
-    margin-bottom: 24px;
-    opacity: 0; animation: slideUp 1s ease 0.6s forwards;
-  }
-  .hero-title em { font-style: italic; color: var(--gold); }
-  .hero-sub {
-    font-size: 13px; letter-spacing: 2px; color: var(--silver);
-    margin-bottom: 56px;
-    opacity: 0; animation: slideUp 1s ease 0.9s forwards;
-  }
-  .hero-cta {
-    opacity: 0; animation: slideUp 1s ease 1.2s forwards;
-  }
-  @keyframes slideUp { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
-
-  .btn-primary {
-    display: inline-block;
-    padding: 16px 52px;
-    border: 1px solid var(--gold);
-    color: var(--gold);
-    font-family: var(--font-sans);
-    font-size: 10px; font-weight: 400;
-    letter-spacing: 4px; text-transform: uppercase;
-    text-decoration: none; cursor: pointer;
-    position: relative; overflow: hidden;
-    transition: color var(--transition);
-    background: transparent;
-  }
-  .btn-primary::before {
-    content: '';
-    position: absolute; inset: 0;
-    background: var(--gold);
-    transform: translateX(-101%);
-    transition: transform var(--transition);
-  }
-  .btn-primary:hover { color: var(--black); }
-  .btn-primary:hover::before { transform: translateX(0); }
-  .btn-primary span { position: relative; z-index: 1; }
-
-  .btn-secondary {
-    display: inline-block;
-    padding: 14px 44px;
-    background: var(--gold);
-    color: var(--black);
-    font-family: var(--font-sans);
-    font-size: 10px; font-weight: 500;
-    letter-spacing: 4px; text-transform: uppercase;
-    text-decoration: none; cursor: pointer;
-    position: relative; overflow: hidden;
-    transition: background var(--transition), transform 0.2s;
-    border: none;
-    width: 100%;
-    text-align: center;
-  }
-  .btn-secondary:hover { background: var(--gold-light); transform: translateY(-1px); }
-
-  .hero-scroll {
-    position: absolute; bottom: 40px; left: 50%;
-    transform: translateX(-50%);
-    display: flex; flex-direction: column; align-items: center; gap: 12px;
-    color: var(--muted);
-    font-size: 9px; letter-spacing: 3px; text-transform: uppercase;
-    opacity: 0; animation: slideUp 1s ease 1.8s forwards;
-  }
-  .scroll-line {
-    width: 1px; height: 50px;
-    background: linear-gradient(to bottom, var(--gold), transparent);
-    animation: scrollLine 2s ease infinite;
-  }
-  @keyframes scrollLine { 0%,100%{transform:scaleY(1);opacity:1} 50%{transform:scaleY(0.5);opacity:0.3} }
-
-  /* MARQUEE */
-  .marquee-section {
-    border-top: 1px solid var(--line);
-    border-bottom: 1px solid var(--line);
-    padding: 20px 0;
-    overflow: hidden;
-    background: var(--deep);
-  }
-  .marquee-track {
-    display: flex; gap: 80px;
-    animation: marquee 20s linear infinite;
-    white-space: nowrap;
-  }
-  .marquee-item {
-    font-size: 10px; letter-spacing: 5px; text-transform: uppercase;
-    color: var(--muted); flex-shrink: 0;
-  }
-  .marquee-dot { color: var(--gold); margin: 0 20px; }
-  @keyframes marquee { from { transform: translateX(0); } to { transform: translateX(-50%); } }
-
-  /* HOME FEATURES */
-  .features-section {
-    padding: 140px 60px;
-    max-width: 1400px; margin: 0 auto;
-  }
-  .section-label {
-    font-size: 9px; letter-spacing: 5px; text-transform: uppercase;
-    color: var(--gold); margin-bottom: 16px;
-  }
-  .section-title {
-    font-family: var(--font-serif);
-    font-size: clamp(36px, 5vw, 64px);
-    font-weight: 300; color: var(--white);
-    line-height: 1.1; margin-bottom: 20px;
-  }
-  .section-title em { font-style: italic; }
-  .features-grid {
-    display: grid; grid-template-columns: repeat(3, 1fr);
-    gap: 1px; margin-top: 80px;
-    border: 1px solid var(--line);
-  }
-  .feature-card {
-    padding: 60px 48px;
-    border-right: 1px solid var(--line);
-    position: relative; overflow: hidden;
-    transition: background var(--transition);
-  }
-  .feature-card:last-child { border-right: none; }
-  .feature-card::before {
-    content: '';
-    position: absolute; bottom: 0; left: 0; right: 0;
-    height: 2px;
-    background: var(--gold);
-    transform: scaleX(0);
-    transition: transform var(--transition);
-    transform-origin: left;
-  }
-  .feature-card:hover { background: var(--deep); }
-  .feature-card:hover::before { transform: scaleX(1); }
-  .feature-num {
-    font-family: var(--font-serif);
-    font-size: 64px; font-weight: 300;
-    color: var(--line); margin-bottom: 24px;
-    line-height: 1;
-  }
-  .feature-title {
-    font-family: var(--font-serif);
-    font-size: 24px; font-weight: 400;
-    color: var(--white); margin-bottom: 16px;
-  }
-  .feature-text { font-size: 12px; color: var(--silver); line-height: 1.8; }
-
-  /* HOME FEATURED */
-  .featured-section {
-    padding: 0 60px 140px;
-    max-width: 1400px; margin: 0 auto;
-  }
-  .featured-split {
-    display: grid; grid-template-columns: 1fr 1fr;
-    gap: 2px; margin-top: 60px;
-  }
-  .featured-img-wrap {
-    position: relative; overflow: hidden;
-    aspect-ratio: 1/1;
-    cursor: pointer;
-  }
-  .featured-img-wrap img {
-    width: 100%; height: 100%;
-    object-fit: cover; filter: grayscale(20%);
-    transition: transform 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94), filter 0.6s;
-  }
-  .featured-img-wrap:hover img { transform: scale(1.04); filter: grayscale(0%); }
-  .featured-overlay {
-    position: absolute; inset: 0;
-    background: linear-gradient(to top, rgba(10,10,10,0.85) 0%, transparent 60%);
-    display: flex; flex-direction: column; justify-content: flex-end;
-    padding: 48px;
-  }
-  .featured-tag {
-    font-size: 9px; letter-spacing: 4px; text-transform: uppercase;
-    color: var(--gold); margin-bottom: 12px;
-  }
-  .featured-name {
-    font-family: var(--font-serif);
-    font-size: 36px; font-weight: 300; color: var(--white);
-    margin-bottom: 8px;
-  }
-  .featured-price { font-size: 13px; color: var(--silver); letter-spacing: 1px; }
-
-  /* ===== CATALOG ===== */
-  .catalog-hero {
-    height: 40vh; min-height: 300px;
-    display: flex; align-items: flex-end;
-    padding: 60px;
-    background:
-      linear-gradient(to bottom, transparent 0%, var(--black) 100%),
-      url('https://images.unsplash.com/photo-1547996160-81dfa63595aa?w=1600&q=80') center/cover;
-    margin-top: 80px;
-  }
-  .catalog-hero h1 {
-    font-family: var(--font-serif);
-    font-size: clamp(48px, 7vw, 96px);
-    font-weight: 300; color: var(--white);
-    line-height: 1;
-  }
-  .catalog-hero h1 em { font-style: italic; color: var(--gold); }
-  .catalog-filters {
-    display: flex; gap: 0;
-    padding: 0 60px 40px;
-    border-bottom: 1px solid var(--line);
-    margin-top: 40px;
-    flex-wrap: wrap;
-  }
-  .filter-btn {
-    padding: 10px 28px;
-    font-size: 9px; letter-spacing: 3px; text-transform: uppercase;
-    color: var(--muted); background: transparent;
-    border: none; cursor: pointer;
-    position: relative;
-    transition: color var(--transition-fast);
-  }
-  .filter-btn.active, .filter-btn:hover { color: var(--gold); }
-  .filter-btn.active::after {
-    content: '';
-    position: absolute; bottom: -1px; left: 28px; right: 28px;
-    height: 1px; background: var(--gold);
-  }
-  .catalog-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
-    gap: 2px;
-    padding: 2px 60px 120px;
-  }
-  .product-card {
-    position: relative; overflow: hidden;
-    background: var(--deep);
-    cursor: pointer;
-  }
-  .product-img-wrap {
-    aspect-ratio: 1;
-    overflow: hidden; position: relative;
-  }
-  .product-img-wrap img {
-    width: 100%; height: 100%;
-    object-fit: cover; filter: grayscale(15%);
-    transition: transform 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94), filter 0.5s;
-  }
-  .product-card:hover .product-img-wrap img { transform: scale(1.06); filter: grayscale(0%); }
-  .product-quick {
-    position: absolute; bottom: 0; left: 0; right: 0;
-    background: rgba(10,10,10,0.92);
-    padding: 20px;
-    transform: translateY(100%);
-    transition: transform var(--transition);
-    text-align: center;
-    font-size: 9px; letter-spacing: 4px; text-transform: uppercase;
-    color: var(--gold);
-  }
-  .product-card:hover .product-quick { transform: translateY(0); }
-  .product-info {
-    padding: 28px 28px 36px;
-    border-top: 1px solid var(--line);
-  }
-  .product-collection {
-    font-size: 9px; letter-spacing: 4px; text-transform: uppercase;
-    color: var(--gold); margin-bottom: 8px;
-  }
-  .product-name {
-    font-family: var(--font-serif);
-    font-size: 22px; font-weight: 400; color: var(--white);
-    margin-bottom: 4px;
-  }
-  .product-ref { font-size: 10px; color: var(--muted); letter-spacing: 1px; margin-bottom: 16px; }
-  .product-price { font-size: 16px; color: var(--light); letter-spacing: 1px; }
-
-  /* ===== PRODUCT PAGE ===== */
-  .product-page {
-    padding-top: 80px;
-    min-height: 100vh;
-  }
-  .product-layout {
-    display: grid; grid-template-columns: 1fr 1fr;
-    min-height: calc(100vh - 80px);
-  }
-  .product-gallery {
-    position: sticky; top: 80px;
-    height: calc(100vh - 80px);
-    overflow: hidden; background: var(--deep);
-  }
-  .gallery-main {
-    width: 100%; height: 75%;
-    overflow: hidden; position: relative;
-  }
-  .gallery-main img {
-    width: 100%; height: 100%;
-    object-fit: cover;
-    transition: transform 0.6s ease;
-  }
-  .gallery-main:hover img { transform: scale(1.03); }
-  .gallery-thumbs {
-    display: flex; gap: 2px;
-    padding: 2px;
-    height: 25%;
-  }
-  .gallery-thumb {
-    flex: 1; overflow: hidden; cursor: pointer;
-    opacity: 0.5; transition: opacity var(--transition-fast);
-  }
-  .gallery-thumb.active, .gallery-thumb:hover { opacity: 1; }
-  .gallery-thumb img { width: 100%; height: 100%; object-fit: cover; }
-
-  .product-details {
-    padding: 80px 80px 80px 60px;
-    overflow-y: auto;
-  }
-  .product-breadcrumb {
-    font-size: 9px; letter-spacing: 3px; text-transform: uppercase;
-    color: var(--muted); margin-bottom: 40px; cursor: pointer;
-  }
-  .product-breadcrumb span { color: var(--gold); margin: 0 8px; }
-  .product-collection-label {
-    font-size: 10px; letter-spacing: 5px; text-transform: uppercase;
-    color: var(--gold); margin-bottom: 16px;
-  }
-  .product-title {
-    font-family: var(--font-serif);
-    font-size: clamp(36px, 4vw, 60px);
-    font-weight: 300; color: var(--white);
-    line-height: 1.1; margin-bottom: 8px;
-  }
-  .product-ref-detail {
-    font-size: 10px; color: var(--muted); letter-spacing: 2px;
-    margin-bottom: 28px;
-  }
-  .product-rating {
-    display: flex; align-items: center; gap: 12px;
-    margin-bottom: 32px;
-  }
-  .stars { color: var(--gold); font-size: 14px; letter-spacing: 2px; }
-  .rating-count { font-size: 11px; color: var(--muted); }
-  .product-price-detail {
-    font-family: var(--font-serif);
-    font-size: 42px; font-weight: 300;
-    color: var(--white); margin-bottom: 8px;
-  }
-  .product-installment {
-    font-size: 11px; color: var(--silver); margin-bottom: 36px;
-  }
-  .product-tagline {
-    font-family: var(--font-serif);
-    font-size: 18px; font-style: italic; font-weight: 300;
-    color: var(--silver); margin-bottom: 40px;
-    padding-left: 24px;
-    border-left: 2px solid var(--gold);
-    line-height: 1.6;
-  }
-  .product-variants { margin-bottom: 40px; }
-  .variants-label {
-    font-size: 9px; letter-spacing: 3px; text-transform: uppercase;
-    color: var(--muted); margin-bottom: 16px;
-  }
-  .variants-options { display: flex; gap: 12px; }
-  .variant-btn {
-    padding: 10px 20px;
-    border: 1px solid var(--line);
-    background: transparent; color: var(--silver);
-    font-size: 10px; letter-spacing: 2px;
-    cursor: pointer; transition: all var(--transition-fast);
-  }
-  .variant-btn.active, .variant-btn:hover {
-    border-color: var(--gold); color: var(--gold);
-  }
-  .add-to-cart-btn {
-    width: 100%; padding: 20px;
-    background: var(--gold);
-    color: var(--black);
-    border: none; cursor: pointer;
-    font-family: var(--font-sans);
-    font-size: 10px; font-weight: 500;
-    letter-spacing: 5px; text-transform: uppercase;
-    transition: background var(--transition), transform 0.2s;
-    margin-bottom: 16px;
-  }
-  .add-to-cart-btn:hover { background: var(--gold-light); transform: translateY(-2px); }
-  .wishlist-btn {
-    width: 100%; padding: 16px;
-    background: transparent;
-    color: var(--silver); border: 1px solid var(--line);
-    cursor: pointer;
-    font-size: 10px; letter-spacing: 3px; text-transform: uppercase;
-    transition: all var(--transition-fast);
-    margin-bottom: 48px;
-  }
-  .wishlist-btn:hover { border-color: var(--silver); color: var(--white); }
-  .product-benefits {
-    display: grid; grid-template-columns: 1fr 1fr;
-    gap: 20px; margin-bottom: 48px;
-  }
-  .benefit-item {
-    display: flex; gap: 14px; align-items: flex-start;
-  }
-  .benefit-icon { color: var(--gold); font-size: 16px; margin-top: 2px; }
-  .benefit-title {
-    font-size: 11px; font-weight: 400; color: var(--white);
-    letter-spacing: 1px; margin-bottom: 4px;
-  }
-  .benefit-text { font-size: 10px; color: var(--muted); }
-  .specs-section { border-top: 1px solid var(--line); padding-top: 40px; }
-  .specs-title {
-    font-size: 9px; letter-spacing: 4px; text-transform: uppercase;
-    color: var(--gold); margin-bottom: 24px;
-  }
-  .specs-grid { display: grid; gap: 0; }
-  .spec-row {
-    display: grid; grid-template-columns: 1fr 1fr;
-    padding: 16px 0;
-    border-bottom: 1px solid var(--line);
-    font-size: 11px;
-  }
-  .spec-key { color: var(--muted); letter-spacing: 1px; }
-  .spec-val { color: var(--light); text-align: right; }
-  .reviews-section { margin-top: 48px; border-top: 1px solid var(--line); padding-top: 40px; }
-  .review-item {
-    padding: 24px 0;
-    border-bottom: 1px solid var(--line);
-  }
-  .review-header { display: flex; justify-content: space-between; margin-bottom: 8px; }
-  .review-author { font-size: 11px; color: var(--white); letter-spacing: 1px; }
-  .review-date { font-size: 10px; color: var(--muted); }
-  .review-stars { color: var(--gold); font-size: 11px; margin-bottom: 10px; }
-  .review-text { font-size: 12px; color: var(--silver); line-height: 1.7; }
-
-  /* ===== CART ===== */
-  .cart-page { padding: 140px 60px 80px; max-width: 1200px; margin: 0 auto; }
-  .cart-header {
-    display: flex; align-items: baseline; gap: 20px;
-    margin-bottom: 60px;
-    border-bottom: 1px solid var(--line); padding-bottom: 32px;
-  }
-  .cart-header h1 {
-    font-family: var(--font-serif);
-    font-size: 56px; font-weight: 300; color: var(--white);
-  }
-  .cart-count-label { font-size: 11px; color: var(--muted); letter-spacing: 2px; }
-  .cart-layout { display: grid; grid-template-columns: 1fr 380px; gap: 60px; }
-  .cart-items { display: flex; flex-direction: column; gap: 0; }
-  .cart-item {
-    display: grid; grid-template-columns: 120px 1fr auto;
-    gap: 32px; align-items: center;
-    padding: 32px 0;
-    border-bottom: 1px solid var(--line);
-    animation: fadeIn 0.5s ease;
-  }
-  .cart-item-img {
-    width: 120px; height: 120px;
-    object-fit: cover; filter: grayscale(10%);
-    background: var(--deep);
-  }
-  .cart-item-name {
-    font-family: var(--font-serif);
-    font-size: 22px; font-weight: 400; color: var(--white);
-    margin-bottom: 4px;
-  }
-  .cart-item-ref { font-size: 10px; color: var(--muted); margin-bottom: 16px; letter-spacing: 1px; }
-  .cart-item-price { font-size: 15px; color: var(--light); margin-bottom: 16px; }
-  .qty-control {
-    display: flex; align-items: center; gap: 0;
-    border: 1px solid var(--line);
-    width: fit-content;
-  }
-  .qty-btn {
-    width: 36px; height: 36px;
-    background: transparent; color: var(--silver);
-    border: none; cursor: pointer;
-    font-size: 16px; transition: color var(--transition-fast), background var(--transition-fast);
-  }
-  .qty-btn:hover { color: var(--gold); background: var(--graphite); }
-  .qty-num {
-    width: 40px; height: 36px;
-    background: transparent;
-    display: flex; align-items: center; justify-content: center;
-    font-size: 13px; color: var(--white);
-    border-left: 1px solid var(--line); border-right: 1px solid var(--line);
-  }
-  .remove-btn {
-    background: transparent; border: none; cursor: pointer;
-    color: var(--muted); font-size: 10px; letter-spacing: 2px;
-    text-transform: uppercase; padding: 8px;
-    transition: color var(--transition-fast);
-  }
-  .remove-btn:hover { color: var(--gold); }
-  .cart-summary {
-    position: sticky; top: 120px;
-    background: var(--deep);
-    border: 1px solid var(--line);
-    padding: 40px;
-    height: fit-content;
-  }
-  .summary-title {
-    font-size: 10px; letter-spacing: 4px; text-transform: uppercase;
-    color: var(--gold); margin-bottom: 32px;
-  }
-  .summary-row {
-    display: flex; justify-content: space-between;
-    padding: 12px 0; border-bottom: 1px solid var(--line);
-    font-size: 12px; color: var(--silver);
-  }
-  .summary-total {
-    display: flex; justify-content: space-between;
-    padding: 24px 0 32px;
-    font-family: var(--font-serif);
-    font-size: 28px; color: var(--white);
-  }
-  .empty-cart {
-    text-align: center; padding: 120px 20px;
-  }
-  .empty-cart h2 {
-    font-family: var(--font-serif);
-    font-size: 48px; font-weight: 300; color: var(--white);
-    margin-bottom: 16px;
-  }
-  .empty-cart p { color: var(--muted); margin-bottom: 40px; }
-
-  /* ===== CHECKOUT (SEM PAGAMENTO) ===== */
-  .checkout-page { padding: 140px 60px 80px; max-width: 1100px; margin: 0 auto; }
-  .checkout-header { margin-bottom: 60px; }
-  .checkout-header h1 {
-    font-family: var(--font-serif);
-    font-size: 56px; font-weight: 300; color: var(--white);
-  }
-  .checkout-layout { display: grid; grid-template-columns: 1fr 380px; gap: 60px; }
-  .checkout-form { display: flex; flex-direction: column; gap: 0; }
-  .form-section { padding: 40px 0; border-bottom: 1px solid var(--line); }
-  .form-section:first-child { padding-top: 0; }
-  .form-section-title {
-    font-size: 10px; letter-spacing: 4px; text-transform: uppercase;
-    color: var(--gold); margin-bottom: 32px;
-  }
-  .form-grid { display: grid; gap: 20px; }
-  .form-grid.two { grid-template-columns: 1fr 1fr; }
-  .form-group { display: flex; flex-direction: column; gap: 8px; }
-  .form-label {
-    font-size: 9px; letter-spacing: 3px; text-transform: uppercase; color: var(--muted);
-  }
-  .form-input {
-    padding: 16px 0;
-    background: transparent; border: none;
-    border-bottom: 1px solid var(--line);
-    color: var(--white); font-family: var(--font-sans);
-    font-size: 13px; outline: none;
-    transition: border-color var(--transition-fast);
-  }
-  .form-input:focus { border-bottom-color: var(--gold); }
-  .form-input::placeholder { color: var(--muted); font-size: 12px; }
-  .form-select {
-    padding: 16px 0;
-    background: transparent; border: none;
-    border-bottom: 1px solid var(--line);
-    color: var(--white); font-family: var(--font-sans);
-    font-size: 13px; outline: none;
-    transition: border-color var(--transition-fast);
-    cursor: pointer;
-    -webkit-appearance: none;
-    appearance: none;
-  }
-  .form-select option { background: var(--graphite); }
-  .payment-options { display: grid; gap: 12px; }
-  .payment-option {
-    display: flex; align-items: center; gap: 16px;
-    padding: 20px 24px;
-    border: 1px solid var(--line);
-    cursor: pointer; transition: border-color var(--transition-fast);
-  }
-  .payment-option.selected { border-color: var(--gold); }
-  .payment-radio {
-    width: 16px; height: 16px;
-    border: 1px solid var(--muted); border-radius: 50%;
-    position: relative; flex-shrink: 0;
-    transition: border-color var(--transition-fast);
-  }
-  .payment-option.selected .payment-radio { border-color: var(--gold); }
-  .payment-option.selected .payment-radio::after {
-    content: ''; position: absolute; inset: 3px;
-    background: var(--gold); border-radius: 50%;
-  }
-  .payment-label { font-size: 12px; color: var(--white); }
-  .payment-sub { font-size: 10px; color: var(--muted); }
-  .checkout-submit {
-    margin-top: 40px;
-    padding: 20px;
-    background: var(--gold);
-    color: var(--black);
-    border: none; cursor: pointer; width: 100%;
-    font-family: var(--font-sans);
-    font-size: 10px; font-weight: 500;
-    letter-spacing: 5px; text-transform: uppercase;
-    transition: background var(--transition), transform 0.2s;
-  }
-  .checkout-submit:hover { background: var(--gold-light); transform: translateY(-2px); }
-
-  /* ORDER SUMMARY */
-  .order-summary-box {
-    background: var(--deep); border: 1px solid var(--line);
-    padding: 40px; height: fit-content;
-    position: sticky; top: 120px;
-  }
-  .order-item {
-    display: flex; gap: 16px; align-items: center;
-    padding: 16px 0; border-bottom: 1px solid var(--line);
-  }
-  .order-item-img { width: 60px; height: 60px; object-fit: cover; }
-  .order-item-name { font-size: 13px; color: var(--white); margin-bottom: 4px; }
-  .order-item-price { font-size: 12px; color: var(--silver); }
-
-  /* ORDER CONFIRMED */
-  .order-confirmed {
-    text-align: center; padding: 120px 40px;
-    max-width: 600px; margin: 0 auto;
-  }
-  .confirmed-check {
-    width: 80px; height: 80px;
-    border: 1px solid var(--gold); border-radius: 50%;
-    display: flex; align-items: center; justify-content: center;
-    font-size: 32px; color: var(--gold);
-    margin: 0 auto 40px;
-    animation: scaleIn 0.6s ease;
-  }
-  @keyframes scaleIn { from { transform: scale(0); opacity: 0; } to { transform: scale(1); opacity: 1; } }
-  .confirmed-title {
-    font-family: var(--font-serif);
-    font-size: 52px; font-weight: 300; color: var(--white);
-    margin-bottom: 16px;
-  }
-  .confirmed-sub { font-size: 13px; color: var(--silver); line-height: 1.8; margin-bottom: 40px; }
-
-  /* ===== ABOUT ===== */
-  .about-hero {
-    height: 70vh; position: relative;
-    display: flex; align-items: flex-end;
-    padding: 80px;
-    overflow: hidden;
-    margin-top: 80px;
-  }
-  .about-hero-bg {
-    position: absolute; inset: 0;
-    background: url('https://images.unsplash.com/photo-1462275646964-a0e3386b89fa?w=1600&q=80') center/cover;
-    opacity: 0.25; filter: grayscale(30%);
-  }
-  .about-hero-overlay {
-    position: absolute; inset: 0;
-    background: linear-gradient(to top, var(--black) 0%, transparent 60%);
-  }
-  .about-hero-content { position: relative; z-index: 2; }
-  .about-hero h1 {
-    font-family: var(--font-serif);
-    font-size: clamp(48px, 8vw, 110px);
-    font-weight: 300; color: var(--white); line-height: 1.0;
-  }
-  .about-hero h1 em { font-style: italic; color: var(--gold); }
-  .about-content { padding: 100px 60px; max-width: 1200px; margin: 0 auto; }
-  .about-intro {
-    display: grid; grid-template-columns: 1fr 2fr; gap: 80px;
-    margin-bottom: 100px; align-items: start;
-  }
-  .about-year {
-    font-family: var(--font-serif);
-    font-size: 100px; font-weight: 300;
-    color: var(--line); line-height: 1;
-  }
-  .about-text {
-    font-family: var(--font-serif);
-    font-size: 22px; font-weight: 300;
-    color: var(--silver); line-height: 1.8;
-  }
-  .about-text p { margin-bottom: 28px; }
-  .about-text p:first-child { color: var(--white); font-size: 26px; }
-  .about-values {
-    display: grid; grid-template-columns: repeat(4, 1fr);
-    gap: 2px; margin-top: 80px;
-  }
-  .about-value {
-    padding: 60px 40px;
-    background: var(--deep); border: 1px solid var(--line);
-    text-align: center;
-  }
-  .about-value-icon { font-size: 32px; color: var(--gold); margin-bottom: 20px; }
-  .about-value-title {
-    font-family: var(--font-serif);
-    font-size: 22px; color: var(--white); margin-bottom: 12px;
-  }
-  .about-value-text { font-size: 11px; color: var(--muted); line-height: 1.8; }
-
-  /* ===== POLICIES ===== */
-  .policies-page { padding: 140px 60px 80px; max-width: 900px; margin: 0 auto; }
-  .policies-tabs {
-    display: flex; gap: 0; margin-bottom: 60px;
-    border-bottom: 1px solid var(--line);
-    flex-wrap: wrap;
-  }
-  .policy-tab {
-    padding: 16px 32px;
-    font-size: 10px; letter-spacing: 3px; text-transform: uppercase;
-    color: var(--muted); background: transparent;
-    border: none; cursor: pointer; position: relative;
-    transition: color var(--transition-fast);
-  }
-  .policy-tab.active { color: var(--gold); }
-  .policy-tab.active::after {
-    content: ''; position: absolute; bottom: -1px; left: 0; right: 0;
-    height: 1px; background: var(--gold);
-  }
-  .policy-content { display: none; animation: fadeIn 0.5s ease; }
-  .policy-content.active { display: block; }
-  .policy-content h2 {
-    font-family: var(--font-serif);
-    font-size: 48px; font-weight: 300; color: var(--white);
-    margin-bottom: 40px;
-  }
-  .policy-content h3 {
-    font-size: 11px; letter-spacing: 3px; text-transform: uppercase;
-    color: var(--gold); margin: 32px 0 16px;
-  }
-  .policy-content p { font-size: 13px; color: var(--silver); line-height: 1.9; margin-bottom: 20px; }
-
-  /* ===== CONTACT ===== */
-  .contact-page { padding: 140px 60px 80px; max-width: 1200px; margin: 0 auto; }
-  .contact-layout { display: grid; grid-template-columns: 1fr 1fr; gap: 100px; align-items: start; }
-  .contact-left h1 {
-    font-family: var(--font-serif);
-    font-size: clamp(48px, 6vw, 80px);
-    font-weight: 300; color: var(--white); line-height: 1.1;
-    margin-bottom: 32px;
-  }
-  .contact-left h1 em { font-style: italic; color: var(--gold); }
-  .contact-left p { font-size: 13px; color: var(--silver); line-height: 1.8; margin-bottom: 48px; }
-  .contact-info { display: flex; flex-direction: column; gap: 28px; }
-  .contact-info-item { display: flex; flex-direction: column; gap: 6px; }
-  .contact-info-label {
-    font-size: 9px; letter-spacing: 4px; text-transform: uppercase; color: var(--gold);
-  }
-  .contact-info-val { font-size: 14px; color: var(--white); }
-  .contact-form { display: flex; flex-direction: column; gap: 28px; }
-  .contact-submit {
-    padding: 18px 40px;
-    background: transparent;
-    border: 1px solid var(--gold);
-    color: var(--gold);
-    font-size: 10px; letter-spacing: 4px; text-transform: uppercase;
-    cursor: pointer;
-    position: relative; overflow: hidden;
-    transition: color var(--transition);
-  }
-  .contact-submit::before {
-    content: ''; position: absolute; inset: 0;
-    background: var(--gold); transform: translateX(-101%);
-    transition: transform var(--transition);
-  }
-  .contact-submit:hover { color: var(--black); }
-  .contact-submit:hover::before { transform: translateX(0); }
-  .contact-submit span { position: relative; z-index: 1; }
-
-  /* ===== FOOTER ===== */
-  footer {
-    background: var(--deep);
-    border-top: 1px solid var(--line);
-    padding: 80px 60px 40px;
-  }
-  .footer-top {
-    display: grid; grid-template-columns: 2fr 1fr 1fr 1fr;
-    gap: 60px; margin-bottom: 60px;
-  }
-  .footer-brand .nav-logo { font-size: 20px; display: block; margin-bottom: 20px; }
-  .footer-brand p { font-size: 12px; color: var(--muted); line-height: 1.8; max-width: 260px; }
-  .footer-col-title {
-    font-size: 9px; letter-spacing: 4px; text-transform: uppercase;
-    color: var(--gold); margin-bottom: 24px;
-  }
-  .footer-links { list-style: none; display: flex; flex-direction: column; gap: 12px; }
-  .footer-links a {
-    font-size: 12px; color: var(--muted); text-decoration: none; cursor: pointer;
-    transition: color var(--transition-fast);
-  }
-  .footer-links a:hover { color: var(--white); }
-  .footer-bottom {
-    border-top: 1px solid var(--line); padding-top: 32px;
-    display: flex; justify-content: space-between; align-items: center;
-  }
-  .footer-copy { font-size: 10px; color: var(--muted); letter-spacing: 1px; }
-  .footer-socials { display: flex; gap: 20px; }
-  .footer-socials a {
-    font-size: 10px; letter-spacing: 2px; text-transform: uppercase;
-    color: var(--muted); text-decoration: none; cursor: pointer;
-    transition: color var(--transition-fast);
-  }
-  .footer-socials a:hover { color: var(--gold); }
-
-  /* TOAST */
-  .toast {
-    position: fixed; bottom: 40px; right: 40px;
-    background: var(--deep); border: 1px solid var(--gold);
-    padding: 20px 32px;
-    display: flex; align-items: center; gap: 16px;
-    z-index: 9999;
-    transform: translateY(100px); opacity: 0;
-    transition: all 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-    pointer-events: none;
-  }
-  .toast.show { transform: translateY(0); opacity: 1; }
-  .toast-icon { color: var(--gold); font-size: 16px; }
-  .toast-text { font-size: 11px; letter-spacing: 2px; text-transform: uppercase; color: var(--white); }
-
-  /* SCROLL REVEAL */
-  .reveal { opacity: 0; transform: translateY(40px); transition: opacity 0.8s ease, transform 0.8s ease; }
-  .reveal.visible { opacity: 1; transform: translateY(0); }
-  .reveal-delay-1 { transition-delay: 0.1s; }
-  .reveal-delay-2 { transition-delay: 0.2s; }
-  .reveal-delay-3 { transition-delay: 0.3s; }
-
-  /* MOBILE MENU */
-  .mobile-menu {
-    position: fixed; inset: 0; z-index: 1001;
-    background: var(--black);
-    display: flex; flex-direction: column; align-items: center; justify-content: center;
-    gap: 40px;
-    transform: translateY(-100%); transition: transform var(--transition);
-    pointer-events: none;
-  }
-  .mobile-menu.open { transform: translateY(0); pointer-events: all; }
-  .mobile-menu a {
-    font-family: var(--font-serif);
-    font-size: 36px; color: var(--white); text-decoration: none; cursor: pointer;
-    transition: color var(--transition-fast);
-  }
-  .mobile-menu a:hover { color: var(--gold); }
-  .close-menu {
-    position: absolute; top: 28px; right: 28px;
-    font-size: 28px; cursor: pointer; color: var(--silver);
-    background: none; border: none;
-    width: 48px; height: 48px;
-    display: flex; align-items: center; justify-content: center;
-    z-index: 10; transition: color var(--transition-fast);
-    -webkit-tap-highlight-color: transparent;
-  }
-  .close-menu:hover { color: var(--gold); }
-
-  /* RESPONSIVE */
-  @media (max-width: 1024px) {
-    nav { padding: 20px 24px; }
-    nav.scrolled { padding: 14px 24px; }
-    .nav-links { display: none; }
-    .hamburger { display: flex; }
-    .features-grid { grid-template-columns: 1fr; }
-    .feature-card { border-right: none; border-bottom: 1px solid var(--line); }
-    .feature-card:last-child { border-bottom: none; }
-    .catalog-grid { padding: 2px 24px 80px; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); }
-    .catalog-filters { padding: 0 24px 32px; overflow-x: auto; flex-wrap: nowrap; }
-    .catalog-hero { padding: 40px 24px; margin-top: 64px; }
-    .product-layout { grid-template-columns: 1fr; }
-    .product-gallery { position: static; height: auto; }
-    .gallery-main { height: 70vw; max-height: 500px; }
-    .gallery-thumbs { height: 100px; }
-    .product-details { padding: 40px 24px 60px; }
-    .cart-page, .checkout-page { padding: 100px 24px 60px; }
-    .cart-layout, .checkout-layout { grid-template-columns: 1fr; }
-    .cart-summary, .order-summary-box { position: static; }
-    .about-content { padding: 60px 24px; }
-    .about-intro { grid-template-columns: 1fr; gap: 40px; }
-    .about-values { grid-template-columns: repeat(2, 1fr); }
-    .footer-top { grid-template-columns: 1fr 1fr; gap: 40px; }
-    .contact-page { padding: 100px 24px 60px; }
-    .contact-layout { grid-template-columns: 1fr; gap: 60px; }
-    .policies-page { padding: 100px 24px 60px; }
-    .features-section { padding: 80px 24px; }
-    .featured-section { padding: 0 24px 80px; }
-    .about-hero { padding: 60px 24px; }
-    .hero-content { padding: 0 24px; }
-    .about-year { font-size: 72px; }
-    .cart-header h1 { font-size: 40px; }
-    .checkout-header h1 { font-size: 40px; }
-  }
-
-  @media (max-width: 768px) {
-    .featured-split { grid-template-columns: 1fr; }
-    .featured-split > div:last-child { display: grid; grid-template-columns: 1fr 1fr; gap: 2px; }
-    .featured-img-wrap { aspect-ratio: 4/5; }
-    .catalog-grid { grid-template-columns: repeat(2, 1fr); padding: 2px 16px 60px; gap: 2px; }
-    .product-benefits { grid-template-columns: 1fr; }
-    .about-values { grid-template-columns: repeat(2, 1fr); }
-    .footer-top { grid-template-columns: 1fr; gap: 32px; }
-    .form-grid.two { grid-template-columns: 1fr; }
-    .cart-item { grid-template-columns: 90px 1fr; gap: 16px; }
-    .cart-item-img { width: 90px; height: 90px; }
-    .cart-item > .remove-btn { grid-column: 1 / -1; text-align: left; }
-    footer { padding: 48px 24px 32px; }
-    .footer-bottom { flex-direction: column; gap: 16px; text-align: center; }
-    .hero-title { font-size: clamp(40px, 10vw, 72px); }
-    .about-hero { height: 50vh; }
-    .about-hero h1 { font-size: clamp(40px, 10vw, 80px); }
-    .policies-tabs { overflow-x: auto; }
-    .hero-sub { font-size: 12px; letter-spacing: 1px; }
-    .features-section { padding: 60px 16px; }
-    .featured-section { padding: 0 16px 60px; }
-  }
-
-  @media (max-width: 480px) {
-    .catalog-grid {
-      grid-template-columns: repeat(2, 1fr); /* Agora são 2 cards por linha */
-      padding: 2px 8px 60px;
-      gap: 2px;
-    }
-    .featured-split { grid-template-columns: 1fr; }
-    .featured-split > div:last-child { grid-template-columns: 1fr; }
-    .about-values { grid-template-columns: 1fr; }
-    .hero-title { font-size: clamp(36px, 11vw, 60px); }
-    .section-title { font-size: clamp(28px, 8vw, 48px); }
-    .nav-logo { font-size: 18px; letter-spacing: 4px; }
-    .cart-item { grid-template-columns: 80px 1fr; }
-    .cart-item-img { width: 80px; height: 80px; }
-    .product-title { font-size: clamp(28px, 8vw, 48px); }
-    .product-price-detail { font-size: 32px; }
-    .order-summary-box { padding: 28px 20px; }
-    .cart-summary { padding: 28px 20px; }
-    .mobile-menu a { font-size: 28px; }
-    .mobile-menu { gap: 28px; }
-    .toast { left: 16px; right: 16px; bottom: 20px; }
-  }
-
-  @media (max-width: 360px) {
-  /* Esconde o texto "Carrinho", mantendo apenas o ícone e o contador */
-  .nav-cart span:not(.cart-count) {
-    display: none;
-  }
-  /* Reduz espaçamentos internos */
-  .nav-cart {
-    gap: 4px;
-  }
-  nav > div:last-child {
-    gap: 8px;
-  }
-  /* Reduz tamanho da logo e padding do nav */
-  .nav-logo {
-    font-size: 16px;
-    letter-spacing: 3px;
-  }
-  nav {
-    padding-left: 12px;
-    padding-right: 12px;
-  }
-}
-
-@media (max-width: 320px) {
-  /* Ajustes ainda mais agressivos para telas muito pequenas */
-  .nav-logo {
-    font-size: 14px;
-    letter-spacing: 2px;
-  }
-  .hamburger span {
-    width: 20px;  /* hambúrguer um pouco menor */
-  }
-}
-
-</style>
 </head>
+
 <body>
 
-<div class="cursor" id="cursor"></div>
-<div class="cursor-ring" id="cursorRing"></div>
-
-<!-- TOAST -->
-<div class="toast" id="toast">
-  <span class="toast-icon">✓</span>
-  <span class="toast-text" id="toastText">Produto adicionado ao carrinho</span>
-</div>
-
-<!-- MOBILE MENU -->
-<div class="mobile-menu" id="mobileMenu">
-  <button class="close-menu" onclick="closeMobileMenu()">✕</button>
-  <a onclick="navigate('home'); closeMobileMenu();">Início</a>
-  <a onclick="navigate('catalog'); closeMobileMenu();">Coleção</a>
-  <a onclick="navigate('about'); closeMobileMenu();">A Marca</a>
-  <a onclick="navigate('contact'); closeMobileMenu();">Contato</a>
-  <a onclick="navigate('policies'); closeMobileMenu();">Políticas</a>
-  <a onclick="navigate('cart'); closeMobileMenu();">Carrinho</a>
-</div>
-
-<!-- NAV -->
-<nav id="mainNav">
-  <div class="nav-logo" onclick="navigate('home')">CHRONOS<span>.</span></div>
-  <ul class="nav-links">
-    <li><a onclick="navigate('home')">Início</a></li>
-    <li><a onclick="navigate('catalog')">Coleção</a></li>
-    <li><a onclick="navigate('about')">A Marca</a></li>
-    <li><a onclick="navigate('contact')">Contato</a></li>
-    <li><a onclick="navigate('policies')">Políticas</a></li>
-  </ul>
-  <div style="display:flex;align-items:center;gap:24px">
-    <div class="nav-cart" onclick="navigate('cart')">
-      <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.2" viewBox="0 0 24 24"><path d="M6 2 3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 01-8 0"/></svg>
-      <span>Carrinho</span>
-      <div class="cart-count" id="cartCount">0</div>
-    </div>
-    <div class="hamburger" onclick="openMobileMenu()">
-      <span></span><span></span><span></span>
-    </div>
-  </div>
-</nav>
-
-<!-- HOME -->
-<div class="page active" id="page-home">
-  <section class="hero">
-    <div class="hero-bg"></div>
-    <div class="hero-img"></div>
-    <div class="hero-noise"></div>
-    <div class="hero-content">
-      <p class="hero-eyebrow">Alta Relojoaria — Desde 1987</p>
-      <h1 class="hero-title">O tempo em sua<br><em>forma mais precisa.</em></h1>
-      <p class="hero-sub">Maestria suíça. Design atemporal. Exclusividade absoluta.</p>
-      <div class="hero-cta">
-        <button class="btn-primary" onclick="navigate('catalog')"><span>Ver Coleção</span></button>
-      </div>
-    </div>
-    <div class="hero-scroll">
-      <div class="scroll-line"></div>
-      <span>Rolar</span>
-    </div>
-  </section>
-
-  <div class="marquee-section">
-    <div class="marquee-track" id="marqueeTrack">
-      <span class="marquee-item">Alta Relojoaria</span><span class="marquee-dot">◆</span>
-      <span class="marquee-item">Movimento Suíço</span><span class="marquee-dot">◆</span>
-      <span class="marquee-item">Design Exclusivo</span><span class="marquee-dot">◆</span>
-      <span class="marquee-item">Precisão Absoluta</span><span class="marquee-dot">◆</span>
-      <span class="marquee-item">Craftmanship</span><span class="marquee-dot">◆</span>
-      <span class="marquee-item">Edição Limitada</span><span class="marquee-dot">◆</span>
-      <span class="marquee-item">Garantia Vitalícia</span><span class="marquee-dot">◆</span>
-      <span class="marquee-item">Alta Relojoaria</span><span class="marquee-dot">◆</span>
-      <span class="marquee-item">Movimento Suíço</span><span class="marquee-dot">◆</span>
-      <span class="marquee-item">Design Exclusivo</span><span class="marquee-dot">◆</span>
-      <span class="marquee-item">Precisão Absoluta</span><span class="marquee-dot">◆</span>
-      <span class="marquee-item">Craftmanship</span><span class="marquee-dot">◆</span>
-      <span class="marquee-item">Edição Limitada</span><span class="marquee-dot">◆</span>
-      <span class="marquee-item">Garantia Vitalícia</span><span class="marquee-dot">◆</span>
-    </div>
+  <div class="toast" id="toast">
+    <span class="toast-icon">✓</span>
+    <span class="toast-text" id="toastText">Produto adicionado ao carrinho</span>
   </div>
 
-  <section class="features-section">
-    <p class="section-label reveal">Nossa Filosofia</p>
-    <h2 class="section-title reveal">Cada detalhe,<br><em>uma declaração.</em></h2>
-    <div class="features-grid">
-      <div class="feature-card reveal reveal-delay-1">
-        <div class="feature-num">01</div>
-        <h3 class="feature-title">Precisão Suíça</h3>
-        <p class="feature-text">Cada mecanismo é calibrado à mão por relojoeiros certificados. Tolerâncias medidas em mícrons, não milímetros. O resultado é um relógio que dura gerações.</p>
+  <div class="mobile-menu" id="mobileMenu">
+    <button class="close-menu" onclick="closeMobileMenu()">✕</button>
+    <a onclick="navigate('home'); closeMobileMenu();">Início</a>
+    <a onclick="navigate('catalog'); closeMobileMenu();">Coleção</a>
+    <a onclick="navigate('about'); closeMobileMenu();">A Marca</a>
+    <a onclick="navigate('contact'); closeMobileMenu();">Contato</a>
+    <a onclick="navigate('policies'); closeMobileMenu();">Políticas</a>
+    <a onclick="navigate('cart'); closeMobileMenu();">Carrinho</a>
+  </div>
+
+  <nav id="mainNav">
+    <div class="nav-logo" onclick="navigate('home')">CHRONOS<span>.</span></div>
+    <ul class="nav-links">
+      <li><a onclick="navigate('home')">Início</a></li>
+      <li><a onclick="navigate('catalog')">Coleção</a></li>
+      <li><a onclick="navigate('about')">A Marca</a></li>
+      <li><a onclick="navigate('contact')">Contato</a></li>
+      <li><a onclick="navigate('policies')">Políticas</a></li>
+    </ul>
+    <div style="display:flex;align-items:center;gap:24px">
+      <div class="nav-cart" onclick="navigate('cart')">
+        <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.2" viewBox="0 0 24 24">
+          <path d="M6 2 3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z" />
+          <line x1="3" y1="6" x2="21" y2="6" />
+          <path d="M16 10a4 4 0 01-8 0" />
+        </svg>
+        <span>Carrinho</span>
+        <div class="cart-count" id="cartCount">0</div>
       </div>
-      <div class="feature-card reveal reveal-delay-2">
-        <div class="feature-num">02</div>
-        <h3 class="feature-title">Design Atemporal</h3>
-        <p class="feature-text">Linhas limpas que transcendem tendências. Cada CHRONOS é um objeto de arte funcional, concebido para ser igualmente magnífico em 2024 ou em 2074.</p>
-      </div>
-      <div class="feature-card reveal reveal-delay-3">
-        <div class="feature-num">03</div>
-        <h3 class="feature-title">Materiais Raros</h3>
-        <p class="feature-text">Safira sintética de grau aeroespacial, titânio de aviação, couro de aligátor certificado. Apenas os materiais que resistem ao julgamento do tempo.</p>
+      <div class="hamburger" onclick="openMobileMenu()">
+        <span></span><span></span><span></span>
       </div>
     </div>
-  </section>
+  </nav>
 
-  <section class="featured-section">
-    <p class="section-label reveal">Destaques da Coleção</p>
-    <h2 class="section-title reveal">Peças <em>icônicas.</em></h2>
-    <div class="featured-split">
-      <div style="display:grid;grid-template-rows:1fr 1fr;gap:2px">
-        <div class="featured-img-wrap reveal" onclick="openProduct(0)">
-          <img src="https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=900&q=80" alt="Chronos Noir">
-          <div class="featured-overlay">
-            <p class="featured-tag">Mais Vendido</p>
-            <h3 class="featured-name" style="font-size:26px">Chronos Noir</h3>
-            <p class="featured-price">R$ 28.500</p>
+  <div class="page active" id="page-home">
+    <section class="hero">
+      <div class="hero-bg"></div>
+      <div class="hero-img"></div>
+      <div class="hero-noise"></div>
+      <div class="hero-content">
+        <p class="hero-eyebrow">Alta Relojoaria — Desde 1987</p>
+        <h1 class="hero-title">O tempo em sua<br><em>forma mais precisa.</em></h1>
+        <p class="hero-sub">Maestria suíça. Design atemporal. Exclusividade absoluta.</p>
+        <div class="hero-cta">
+          <button class="btn-primary" onclick="navigate('catalog')"><span>Ver Coleção</span></button>
+        </div>
+      </div>
+      <div class="hero-scroll">
+        <div class="scroll-line"></div>
+        <span>Rolar</span>
+      </div>
+    </section>
+
+    <div class="marquee-section">
+      <div class="marquee-track" id="marqueeTrack">
+        <span class="marquee-item">Alta Relojoaria</span><span class="marquee-dot">◆</span>
+        <span class="marquee-item">Movimento Suíço</span><span class="marquee-dot">◆</span>
+        <span class="marquee-item">Design Exclusivo</span><span class="marquee-dot">◆</span>
+        <span class="marquee-item">Precisão Absoluta</span><span class="marquee-dot">◆</span>
+        <span class="marquee-item">Craftmanship</span><span class="marquee-dot">◆</span>
+        <span class="marquee-item">Edição Limitada</span><span class="marquee-dot">◆</span>
+        <span class="marquee-item">Garantia Vitalícia</span><span class="marquee-dot">◆</span>
+        <span class="marquee-item">Alta Relojoaria</span><span class="marquee-dot">◆</span>
+        <span class="marquee-item">Movimento Suíço</span><span class="marquee-dot">◆</span>
+        <span class="marquee-item">Design Exclusivo</span><span class="marquee-dot">◆</span>
+        <span class="marquee-item">Precisão Absoluta</span><span class="marquee-dot">◆</span>
+        <span class="marquee-item">Craftmanship</span><span class="marquee-dot">◆</span>
+        <span class="marquee-item">Edição Limitada</span><span class="marquee-dot">◆</span>
+        <span class="marquee-item">Garantia Vitalícia</span><span class="marquee-dot">◆</span>
+      </div>
+    </div>
+
+    <section class="features-section">
+      <p class="section-label reveal">Nossa Filosofia</p>
+      <h2 class="section-title reveal">Cada detalhe,<br><em>uma declaração.</em></h2>
+      <div class="features-grid">
+        <div class="feature-card reveal reveal-delay-1">
+          <div class="feature-num">01</div>
+          <h3 class="feature-title">Precisão Suíça</h3>
+          <p class="feature-text">Cada mecanismo é calibrado à mão por relojoeiros certificados. Tolerâncias medidas em
+            mícrons, não milímetros. O resultado é um relógio que dura gerações.</p>
+        </div>
+        <div class="feature-card reveal reveal-delay-2">
+          <div class="feature-num">02</div>
+          <h3 class="feature-title">Design Atemporal</h3>
+          <p class="feature-text">Linhas limpas que transcendem tendências. Cada CHRONOS é um objeto de arte funcional,
+            concebido para ser igualmente magnífico em 2024 ou em 2074.</p>
+        </div>
+        <div class="feature-card reveal reveal-delay-3">
+          <div class="feature-num">03</div>
+          <h3 class="feature-title">Materiais Raros</h3>
+          <p class="feature-text">Safira sintética de grau aeroespacial, titânio de aviação, couro de aligátor
+            certificado. Apenas os materiais que resistem ao julgamento do tempo.</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="featured-section">
+      <p class="section-label reveal">Destaques da Coleção</p>
+      <h2 class="section-title reveal">Peças <em>icônicas.</em></h2>
+      <div class="featured-split">
+        <div style="display:grid;grid-template-rows:1fr 1fr;gap:2px">
+          <div class="featured-img-wrap reveal" onclick="openProduct(0)">
+            <img src="https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=900&q=80" alt="Chronos Noir">
+            <div class="featured-overlay">
+              <p class="featured-tag">Mais Vendido</p>
+              <h3 class="featured-name" style="font-size:26px">Chronos Noir</h3>
+              <p class="featured-price">R$ 28.500</p>
+            </div>
+          </div>
+          <div class="featured-img-wrap reveal reveal-delay-2" onclick="openProduct(5)">
+            <img src="https://images.unsplash.com/photo-1524592094714-0f0654e20314?w=900&q=80" alt="Réserve Marine">
+            <div class="featured-overlay">
+              <p class="featured-tag">Exclusivo</p>
+              <h3 class="featured-name" style="font-size:26px">Réserve Marine</h3>
+              <p class="featured-price">R$ 22.300</p>
+            </div>
           </div>
         </div>
-        <div class="featured-img-wrap reveal reveal-delay-2" onclick="openProduct(5)">
-          <img src="https://images.unsplash.com/photo-1524592094714-0f0654e20314?w=900&q=80" alt="Réserve Marine">
-          <div class="featured-overlay">
-            <p class="featured-tag">Exclusivo</p>
-            <h3 class="featured-name" style="font-size:26px">Réserve Marine</h3>
-            <p class="featured-price">R$ 22.300</p>
+        <div style="display:grid;grid-template-rows:1fr 1fr;gap:2px">
+          <div class="featured-img-wrap reveal reveal-delay-1" onclick="openProduct(1)">
+            <img src="https://images.unsplash.com/photo-1547996160-81dfa63595aa?w=900&q=80" alt="Atelier Blanc">
+            <div class="featured-overlay">
+              <p class="featured-tag">Novo</p>
+              <h3 class="featured-name" style="font-size:26px">Atelier Blanc</h3>
+              <p class="featured-price">R$ 34.900</p>
+            </div>
           </div>
-        </div>
-      </div>
-      <div style="display:grid;grid-template-rows:1fr 1fr;gap:2px">
-        <div class="featured-img-wrap reveal reveal-delay-1" onclick="openProduct(1)">
-          <img src="https://images.unsplash.com/photo-1547996160-81dfa63595aa?w=900&q=80" alt="Atelier Blanc">
-          <div class="featured-overlay">
-            <p class="featured-tag">Novo</p>
-            <h3 class="featured-name" style="font-size:26px">Atelier Blanc</h3>
-            <p class="featured-price">R$ 34.900</p>
-          </div>
-        </div>
-        <div class="featured-img-wrap reveal reveal-delay-3" onclick="openProduct(2)">
-          <img src="https://images.unsplash.com/photo-1612817288484-6f916006741a?w=900&q=80" alt="Grand Complication">
-          <div class="featured-overlay">
-            <p class="featured-tag">Edição Limitada</p>
-            <h3 class="featured-name" style="font-size:26px">Grand Complication</h3>
-            <p class="featured-price">R$ 89.000</p>
-          </div>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <div style="border-top:1px solid var(--line);padding:120px 60px;text-align:center;background:var(--deep)">
-    <p class="section-label reveal">Excelência em números</p>
-    <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:40px;max-width:900px;margin:60px auto 0">
-      <div class="reveal">
-        <div style="font-family:var(--font-serif);font-size:64px;font-weight:300;color:var(--gold);line-height:1">37</div>
-        <div style="font-size:9px;letter-spacing:3px;text-transform:uppercase;color:var(--muted);margin-top:8px">Anos de Tradição</div>
-      </div>
-      <div class="reveal reveal-delay-1">
-        <div style="font-family:var(--font-serif);font-size:64px;font-weight:300;color:var(--gold);line-height:1">12</div>
-        <div style="font-size:9px;letter-spacing:3px;text-transform:uppercase;color:var(--muted);margin-top:8px">Coleções Exclusivas</div>
-      </div>
-      <div class="reveal reveal-delay-2">
-        <div style="font-family:var(--font-serif);font-size:64px;font-weight:300;color:var(--gold);line-height:1">500</div>
-        <div style="font-size:9px;letter-spacing:3px;text-transform:uppercase;color:var(--muted);margin-top:8px">Peças por Ano</div>
-      </div>
-      <div class="reveal reveal-delay-3">
-        <div style="font-family:var(--font-serif);font-size:64px;font-weight:300;color:var(--gold);line-height:1">∞</div>
-        <div style="font-size:9px;letter-spacing:3px;text-transform:uppercase;color:var(--muted);margin-top:8px">Garantia Vitalícia</div>
-      </div>
-    </div>
-  </div>
-
-  <div id="footer-home"></div>
-</div>
-
-<!-- CATALOG -->
-<div class="page" id="page-catalog">
-  <div class="catalog-hero">
-    <div>
-      <p style="font-size:9px;letter-spacing:5px;text-transform:uppercase;color:var(--gold);margin-bottom:16px">Chronos Manufacture</p>
-      <h1>A <em>Coleção</em></h1>
-    </div>
-  </div>
-  <div class="catalog-filters">
-    <button class="filter-btn active" data-filter="all">Todos</button>
-    <button class="filter-btn" data-filter="automatico">Automático</button>
-    <button class="filter-btn" data-filter="cronografo">Cronógrafo</button>
-    <button class="filter-btn" data-filter="complication">Grande Complicação</button>
-  </div>
-  <div class="catalog-grid" id="catalogGrid"></div>
-  <div id="footer-catalog"></div>
-</div>
-
-<!-- PRODUCT -->
-<div class="page" id="page-product">
-  <div class="product-page">
-    <div class="product-layout">
-      <div class="product-gallery">
-        <div class="gallery-main">
-          <img id="mainProductImg" src="" alt="">
-        </div>
-        <div class="gallery-thumbs" id="galleryThumbs"></div>
-      </div>
-      <div class="product-details">
-        <p class="product-breadcrumb" onclick="navigate('catalog')">← <span>Coleção</span> / <span id="breadcrumbName"></span></p>
-        <p class="product-collection-label" id="productCollection"></p>
-        <h1 class="product-title" id="productTitle"></h1>
-        <p class="product-ref-detail" id="productRef"></p>
-        <div class="product-rating">
-          <span class="stars">★★★★★</span>
-          <span class="rating-count">4.9 · 47 avaliações</span>
-        </div>
-        <div class="product-price-detail" id="productPrice"></div>
-        <p class="product-installment" id="productInstall"></p>
-        <blockquote class="product-tagline" id="productTagline"></blockquote>
-        <div class="product-variants">
-          <p class="variants-label">Pulseira</p>
-          <div class="variants-options">
-            <button class="variant-btn active">Couro</button>
-            <button class="variant-btn">Aço</button>
-            <button class="variant-btn">Borracha</button>
-          </div>
-        </div>
-        <button class="add-to-cart-btn" id="addToCartBtn">Adicionar ao Carrinho</button>
-        <button class="wishlist-btn">♡ Adicionar à Lista de Desejos</button>
-        <div class="product-benefits">
-          <div class="benefit-item"><span class="benefit-icon">◈</span><div><p class="benefit-title">Garantia Vitalícia</p><p class="benefit-text">Cobertura completa para toda a vida útil</p></div></div>
-          <div class="benefit-item"><span class="benefit-icon">◈</span><div><p class="benefit-title">Frete Expresso</p><p class="benefit-text">Entrega em 3 dias úteis, grátis</p></div></div>
-          <div class="benefit-item"><span class="benefit-icon">◈</span><div><p class="benefit-title">Pagamento Seguro</p><p class="benefit-text">Criptografia SSL 256-bit</p></div></div>
-          <div class="benefit-item"><span class="benefit-icon">◈</span><div><p class="benefit-title">Troca Fácil</p><p class="benefit-text">30 dias para troca ou devolução</p></div></div>
-        </div>
-        <div class="specs-section">
-          <p class="specs-title">Especificações Técnicas</p>
-          <div class="specs-grid" id="specsGrid"></div>
-        </div>
-        <div class="reviews-section">
-          <p class="specs-title">Avaliações dos Clientes</p>
-          <div id="reviewsContainer"></div>
-        </div>
-      </div>
-    </div>
-  </div>
-  <div id="footer-product"></div>
-</div>
-
-<!-- CART -->
-<div class="page" id="page-cart">
-  <div class="cart-page">
-    <div class="cart-header">
-      <h1>Carrinho</h1>
-      <span class="cart-count-label" id="cartItemCount">0 itens</span>
-    </div>
-    <div id="cartContent"></div>
-  </div>
-  <div id="footer-cart"></div>
-</div>
-
-<!-- CHECKOUT (sem pagamento) -->
-<div class="page" id="page-checkout">
-  <div class="checkout-page" id="checkoutContent"></div>
-  <div id="footer-checkout"></div>
-</div>
-
-<!-- ABOUT -->
-<div class="page" id="page-about">
-  <div class="about-hero">
-    <div class="about-hero-bg"></div>
-    <div class="about-hero-overlay"></div>
-    <div class="about-hero-content">
-      <h1>A Arte do<br><em>Tempo Perfeito.</em></h1>
-    </div>
-  </div>
-  <div class="about-content">
-    <div class="about-intro reveal">
-      <div class="about-year">1987</div>
-      <div class="about-text">
-        <p>CHRONOS nasceu de uma obsessão: criar relógios que fossem simultaneamente instrumentos de precisão e obras de arte.</p>
-        <p>Fundada em Genebra, nossa maison reuniu os mais talentosos relojoeiros suíços com designers de vanguarda. O resultado é uma linha de peças que desafia as convenções do mercado de luxo.</p>
-        <p>Cada CHRONOS é montado manualmente por um único mestre relojoeiro, que assina o interior da caixa. Uma tradição que mantemos desde o primeiro dia.</p>
-        <p>Produzimos apenas 500 peças por ano. Não por limitação, mas por princípio. A exclusividade não é um argumento de marketing — é uma consequência natural do nosso compromisso com a perfeição.</p>
-      </div>
-    </div>
-    <div class="about-values">
-      <div class="about-value reveal">
-        <div class="about-value-icon">◈</div>
-        <h3 class="about-value-title">Precisão</h3>
-        <p class="about-value-text">Tolerâncias de ±0.3 segundos por dia. A física como arte.</p>
-      </div>
-      <div class="about-value reveal reveal-delay-1">
-        <div class="about-value-icon">◈</div>
-        <h3 class="about-value-title">Design</h3>
-        <p class="about-value-text">Linha limpa. Proporção áurea. Elegância que não envelhece.</p>
-      </div>
-      <div class="about-value reveal reveal-delay-2">
-        <div class="about-value-icon">◈</div>
-        <h3 class="about-value-title">Qualidade</h3>
-        <p class="about-value-text">Apenas materiais de grau aeroespacial. Sem compromissos.</p>
-      </div>
-      <div class="about-value reveal reveal-delay-3">
-        <div class="about-value-icon">◈</div>
-        <h3 class="about-value-title">Exclusividade</h3>
-        <p class="about-value-text">500 peças por ano. O seu CHRONOS é verdadeiramente único.</p>
-      </div>
-    </div>
-  </div>
-  <div id="footer-about"></div>
-</div>
-
-<!-- POLICIES -->
-<div class="page" id="page-policies">
-  <div class="policies-page">
-    <div class="policies-tabs">
-      <button class="policy-tab active" onclick="switchPolicy('exchange',this)">Política de Troca</button>
-      <button class="policy-tab" onclick="switchPolicy('privacy',this)">Privacidade</button>
-    </div>
-    <div class="policy-content active" id="policy-exchange">
-      <h2>Política de Troca<br>e Devolução</h2>
-      <h3>Prazo para Troca</h3>
-      <p>CHRONOS oferece 30 dias corridos para solicitação de troca ou devolução a partir da data de recebimento do produto. O relógio deve estar em perfeitas condições, com todos os itens originais: caixa, certificado de autenticidade, garantia e manual.</p>
-      <h3>Condições Aceitas</h3>
-      <p>Aceitamos trocas por defeito de fabricação, divergência com o produto anunciado ou arrependimento de compra. O produto não deve apresentar sinais de uso, arranhões ou danos causados pelo cliente.</p>
-      <h3>Processo de Devolução</h3>
-      <p>Para iniciar o processo, entre em contato com nossa equipe pelo e-mail <a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="1b7a6f7e757f72767e756f745b7873697475746835787476357969">[email&#160;protected]</a> ou pelo telefone +55 11 3040-7000. Enviaremos uma etiqueta de coleta sem custo adicional ao cliente.</p>
-      <h3>Reembolso</h3>
-      <p>O reembolso será processado em até 10 dias úteis após o recebimento e inspeção do produto. Para compras no cartão de crédito, o estorno pode levar até 2 faturas, dependendo da operadora.</p>
-      <h3>Garantia</h3>
-      <p>Todos os relógios CHRONOS possuem garantia vitalícia contra defeitos de fabricação. Essa garantia cobre o movimento, a caixa e a resistência à água conforme especificado. Danos por impacto, mau uso ou intervenção de terceiros não autorizados estão excluídos da garantia.</p>
-    </div>
-    <div class="policy-content" id="policy-privacy">
-      <h2>Política de<br>Privacidade</h2>
-      <h3>Coleta de Dados</h3>
-      <p>Coletamos apenas os dados estritamente necessários para processar sua compra e oferecer a melhor experiência possível: nome, endereço de entrega, e-mail e dados de pagamento (processados com criptografia SSL 256-bit).</p>
-      <h3>Uso das Informações</h3>
-      <p>Suas informações são utilizadas exclusivamente para processamento de pedidos, comunicação sobre o status de entrega e, com seu consentimento, envio de informações sobre novas coleções e eventos exclusivos CHRONOS.</p>
-      <h3>Compartilhamento</h3>
-      <p>Não vendemos, alugamos ou compartilhamos seus dados com terceiros para fins comerciais. Compartilhamos informações apenas com parceiros logísticos necessários para a entrega dos produtos.</p>
-      <h3>Seus Direitos (LGPD)</h3>
-      <p>Em conformidade com a Lei Geral de Proteção de Dados (LGPD), você tem direito a acessar, corrigir, excluir ou exportar seus dados a qualquer momento. Para exercer esses direitos, entre em contato com <a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="49393b203f282a202d282d2c092a213b2627263a672a2624672b3b">[email&#160;protected]</a>.</p>
-      <h3>Cookies</h3>
-      <p>Utilizamos cookies essenciais para o funcionamento do site e cookies analíticos para melhorar a experiência. Você pode gerenciar suas preferências de cookies a qualquer momento nas configurações do navegador.</p>
-    </div>
-  </div>
-  <div id="footer-policies"></div>
-</div>
-
-<!-- CONTACT -->
-<div class="page" id="page-contact">
-  <div class="contact-page">
-    <div class="contact-layout">
-      <div class="contact-left">
-        <h1>Fale com<br>nossa <em>equipe.</em></h1>
-        <p>Nossa equipe de especialistas está disponível para responder suas dúvidas, auxiliar na escolha do relógio perfeito ou agendar uma visita à nossa boutique.</p>
-        <div class="contact-info">
-          <div class="contact-info-item">
-            <span class="contact-info-label">Boutique</span>
-            <span class="contact-info-val">Av. Paulista, 1374 — São Paulo, SP</span>
-          </div>
-          <div class="contact-info-item">
-            <span class="contact-info-label">Telefone</span>
-            <span class="contact-info-val">+55 (11) 3040-7000</span>
-          </div>
-          <div class="contact-info-item">
-            <span class="contact-info-label">E-mail</span>
-            <span class="contact-info-val"><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="d9b8adbcb7bdb0b4bcb7adb699bab1abb6b7b6aaf7bab6b4f7bbab">[email&#160;protected]</a></span>
-          </div>
-          <div class="contact-info-item">
-            <span class="contact-info-label">Horário</span>
-            <span class="contact-info-val">Seg–Sex: 10h às 19h · Sáb: 10h às 16h</span>
+          <div class="featured-img-wrap reveal reveal-delay-3" onclick="openProduct(2)">
+            <img src="https://images.unsplash.com/photo-1612817288484-6f916006741a?w=900&q=80" alt="Grand Complication">
+            <div class="featured-overlay">
+              <p class="featured-tag">Edição Limitada</p>
+              <h3 class="featured-name" style="font-size:26px">Grand Complication</h3>
+              <p class="featured-price">R$ 89.000</p>
+            </div>
           </div>
         </div>
       </div>
-      <form class="contact-form" onsubmit="submitContact(event)">
-        <div class="form-group">
-          <label class="form-label">Nome completo</label>
-          <input type="text" class="form-input" placeholder="Seu nome" required>
+    </section>
+
+    <div style="border-top:1px solid var(--line);padding:120px 60px;text-align:center;background:var(--deep)">
+      <p class="section-label reveal">Excelência em números</p>
+      <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:40px;max-width:900px;margin:60px auto 0">
+        <div class="reveal">
+          <div style="font-family:var(--font-serif);font-size:64px;font-weight:300;color:var(--gold);line-height:1">37
+          </div>
+          <div style="font-size:9px;letter-spacing:3px;text-transform:uppercase;color:var(--muted);margin-top:8px">Anos
+            de Tradição</div>
         </div>
-        <div class="form-group">
-          <label class="form-label">E-mail</label>
-          <input type="email" class="form-input" placeholder="seu@email.com" required>
+        <div class="reveal reveal-delay-1">
+          <div style="font-family:var(--font-serif);font-size:64px;font-weight:300;color:var(--gold);line-height:1">12
+          </div>
+          <div style="font-size:9px;letter-spacing:3px;text-transform:uppercase;color:var(--muted);margin-top:8px">
+            Coleções Exclusivas</div>
         </div>
-        <div class="form-group">
-          <label class="form-label">Telefone</label>
-          <input type="tel" class="form-input" placeholder="+55 (11) 00000-0000">
+        <div class="reveal reveal-delay-2">
+          <div style="font-family:var(--font-serif);font-size:64px;font-weight:300;color:var(--gold);line-height:1">500
+          </div>
+          <div style="font-size:9px;letter-spacing:3px;text-transform:uppercase;color:var(--muted);margin-top:8px">Peças
+            por Ano</div>
         </div>
-        <div class="form-group">
-          <label class="form-label">Assunto</label>
-          <select class="form-select">
-            <option>Dúvida sobre produto</option>
-            <option>Pedido em andamento</option>
-            <option>Visita à boutique</option>
-            <option>Assistência técnica</option>
-            <option>Outro</option>
-          </select>
-        </div>
-        <div class="form-group">
-          <label class="form-label">Mensagem</label>
-          <textarea class="form-input" rows="5" placeholder="Como podemos ajudá-lo?" style="resize:vertical"></textarea>
-        </div>
-        <button class="contact-submit" type="submit"><span>Enviar Mensagem</span></button>
-      </form>
+      </div>
     </div>
+
+    <div id="footer-home"></div>
   </div>
-  <div id="footer-contact"></div>
-</div>
 
-<script>
-  // ========== DATA ==========
-  const products = [
-    {
-      id: 0,
-      name: 'Chronos Noir',
-      collection: 'Série Nuit',
-      category: 'automatico',
-      ref: 'CHR-2024-N01',
-      price: 28500,
-      tagline: 'Quando a escuridão encontra a perfeição. Um manifesto em aço e safira.',
-      images: [
-        'https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=800&q=80',
-        'https://images.unsplash.com/photo-1524592094714-0f0654e20314?w=800&q=80',
-        'https://images.unsplash.com/photo-1508057198894-247b23fe5ade?w=800&q=80',
-      ],
-      specs: { 'Material da Caixa': 'Aço Inoxidável 904L', 'Diâmetro': '42mm', 'Espessura': '11.2mm', 'Resistência à Água': '300m / 30 ATM', 'Movimento': 'Cal. CH-3235 Automático', 'Reserva de Marcha': '70 horas', 'Vidro': 'Safira Duplex AR', 'Pulseira': 'Couro de Aligátor' }
-    },
-    {
-      id: 1,
-      name: 'Atelier Blanc',
-      collection: 'Série Lumière',
-      category: 'automatico',
-      ref: 'CHR-2024-L02',
-      price: 34900,
-      tagline: 'Branco que não é ausência de cor. É a presença de toda elegância possível.',
-      images: [
-        'https://images.unsplash.com/photo-1547996160-81dfa63595aa?w=800&q=80',
-        'https://images.unsplash.com/photo-1533139502658-0198f920d8e8?w=800&q=80',
-        'https://images.unsplash.com/photo-1524592094714-0f0654e20314?w=800&q=80',
-      ],
-      specs: { 'Material da Caixa': 'Ouro Branco 18K', 'Diâmetro': '40mm', 'Espessura': '9.8mm', 'Resistência à Água': '100m / 10 ATM', 'Movimento': 'Cal. CH-9001 Automático', 'Reserva de Marcha': '64 horas', 'Vidro': 'Safira Triplex', 'Pulseira': 'Couro de Crocodilo' }
-    },
-    {
-      id: 2,
-      name: 'Grand Complication',
-      collection: 'Série Heritage',
-      category: 'complication',
-      ref: 'CHR-2024-H01',
-      price: 89000,
-      tagline: 'A máquina mais complexa que a humanidade conseguiu miniaturizar. Um legado.',
-      images: [
-        'https://images.unsplash.com/photo-1612817288484-6f916006741a?w=800&q=80',
-        'https://images.unsplash.com/photo-1508057198894-247b23fe5ade?w=800&q=80',
-        'https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=800&q=80',
-      ],
-      specs: { 'Material da Caixa': 'Platina 950', 'Diâmetro': '44mm', 'Espessura': '14.5mm', 'Resistência à Água': '50m / 5 ATM', 'Movimento': 'Cal. CH-G01 Manual', 'Reserva de Marcha': '96 horas', 'Complicações': 'Tourbillon, Repeater, Calendário Perpétuo', 'Pulseira': 'Couro de Jacaré Solitaire' }
-    },
-    {
-      id: 3,
-      name: 'Veloce Cronografo',
-      collection: 'Série Sport',
-      category: 'cronografo',
-      ref: 'CHR-2024-S03',
-      price: 19800,
-      tagline: 'Cada segundo capturado com a precisão de quem nunca aceita menos que o máximo.',
-      images: [
-        'https://images.unsplash.com/photo-1533139502658-0198f920d8e8?w=800&q=80',
-        'https://images.unsplash.com/photo-1547996160-81dfa63595aa?w=800&q=80',
-        'https://images.unsplash.com/photo-1612817288484-6f916006741a?w=800&q=80',
-      ],
-      specs: { 'Material da Caixa': 'Titânio Grau 5', 'Diâmetro': '43mm', 'Espessura': '13.2mm', 'Resistência à Água': '200m / 20 ATM', 'Movimento': 'Cal. CH-4130 Automático', 'Reserva de Marcha': '68 horas', 'Vidro': 'Safira Anti-Reflexo', 'Pulseira': 'Borracha / Aço' }
-    },
-    {
-      id: 4,
-      name: 'Minimaliste',
-      collection: 'Série Pure',
-      category: 'automatico',
-      ref: 'CHR-2024-P01',
-      price: 16500,
-      tagline: 'A perfeição não é quando não há mais nada para adicionar, mas quando não há mais nada para remover.',
-      images: [
-        'https://images.unsplash.com/photo-1508057198894-247b23fe5ade?w=800&q=80',
-        'https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=800&q=80',
-        'https://images.unsplash.com/photo-1533139502658-0198f920d8e8?w=800&q=80',
-      ],
-      specs: { 'Material da Caixa': 'Aço PVD Preto', 'Diâmetro': '38mm', 'Espessura': '7.9mm', 'Resistência à Água': '50m / 5 ATM', 'Movimento': 'Cal. CH-2824 Automático', 'Reserva de Marcha': '42 horas', 'Vidro': 'Safira Plana', 'Pulseira': 'Couro Sueco' }
-    },
-    {
-      id: 5,
-      name: 'Réserve Marine',
-      collection: 'Série Aqua',
-      category: 'automatico',
-      ref: 'CHR-2024-A01',
-      price: 22300,
-      tagline: 'Das profundezas do oceano à superfície do elegante. Dois mundos, um relógio.',
-      images: [
-        'https://images.unsplash.com/photo-1524592094714-0f0654e20314?w=800&q=80',
-        'https://images.unsplash.com/photo-1547996160-81dfa63595aa?w=800&q=80',
-        'https://images.unsplash.com/photo-1508057198894-247b23fe5ade?w=800&q=80',
-      ],
-      specs: { 'Material da Caixa': 'Aço Cerâmica', 'Diâmetro': '42mm', 'Espessura': '12.1mm', 'Resistência à Água': '600m / 60 ATM', 'Movimento': 'Cal. CH-3235 Automático', 'Reserva de Marcha': '70 horas', 'Bezel': 'Cerâmica Unidirecional', 'Pulseira': 'Aço Oyster' }
-    },
-    {
-      id: 6,
-      name: 'Tourbillon Céleste',
-      collection: 'Série Heritage',
-      category: 'complication',
-      ref: 'CHR-2024-H02',
-      price: 142000,
-      tagline: 'O tourbillon é a dança perpétua da gravidade vencida. Uma obra-prima em movimento.',
-      images: [
-        'https://images.unsplash.com/photo-1612817288484-6f916006741a?w=800&q=80',
-        'https://images.unsplash.com/photo-1524592094714-0f0654e20314?w=800&q=80',
-        'https://images.unsplash.com/photo-1547996160-81dfa63595aa?w=800&q=80',
-      ],
-      specs: { 'Material da Caixa': 'Ouro Rosa 18K', 'Diâmetro': '43mm', 'Espessura': '13.8mm', 'Resistência à Água': '30m / 3 ATM', 'Movimento': 'Cal. CH-T01 Manual Tourbillon', 'Reserva de Marcha': '80 horas', 'Complicações': 'Tourbillon Flying, Fuso Duplo', 'Pulseira': 'Couro de Avestruz' }
-    },
-    {
-      id: 7,
-      name: 'Perpetuel Calendrier',
-      collection: 'Série Heritage',
-      category: 'complication',
-      ref: 'CHR-2024-H03',
-      price: 67500,
-      tagline: 'Um calendário que conhece cada ano bissexto até 2100. A matemática como poesia.',
-      images: [
-        'https://images.unsplash.com/photo-1508057198894-247b23fe5ade?w=800&q=80',
-        'https://images.unsplash.com/photo-1612817288484-6f916006741a?w=800&q=80',
-        'https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=800&q=80',
-      ],
-      specs: { 'Material da Caixa': 'Aço Inoxidável 316L', 'Diâmetro': '41mm', 'Espessura': '12.4mm', 'Resistência à Água': '50m / 5 ATM', 'Movimento': 'Cal. CH-P01 Automático', 'Reserva de Marcha': '72 horas', 'Complicações': 'Calendário Perpétuo, Fase da Lua', 'Pulseira': 'Couro de Vitela' }
-    },
-    {
-      id: 8,
-      name: 'Sport Extreme',
-      collection: 'Série Sport',
-      category: 'cronografo',
-      ref: 'CHR-2024-S01',
-      price: 24600,
-      tagline: 'Construído para os extremos. Feito para aqueles que não conhecem limites.',
-      images: [
-        'https://images.unsplash.com/photo-1533139502658-0198f920d8e8?w=800&q=80',
-        'https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=800&q=80',
-        'https://images.unsplash.com/photo-1508057198894-247b23fe5ade?w=800&q=80',
-      ],
-      specs: { 'Material da Caixa': 'Carbono Forjado', 'Diâmetro': '45mm', 'Espessura': '14.2mm', 'Resistência à Água': '300m / 30 ATM', 'Movimento': 'Cal. CH-4131 Automático', 'Reserva de Marcha': '72 horas', 'Vidro': 'Safira Antirreflexo', 'Pulseira': 'Borracha Fluorelastômero' }
-    },
-    {
-      id: 9,
-      name: 'Racing Chrono',
-      collection: 'Série Sport',
-      category: 'cronografo',
-      ref: 'CHR-2024-S02',
-      price: 31200,
-      tagline: 'Inspirado nas pistas. Cada subdial conta a história de uma corrida perfeita.',
-      images: [
-        'https://images.unsplash.com/photo-1547996160-81dfa63595aa?w=800&q=80',
-        'https://images.unsplash.com/photo-1533139502658-0198f920d8e8?w=800&q=80',
-        'https://images.unsplash.com/photo-1612817288484-6f916006741a?w=800&q=80',
-      ],
-      specs: { 'Material da Caixa': 'Aço PVD Antracite', 'Diâmetro': '44mm', 'Espessura': '13.5mm', 'Resistência à Água': '100m / 10 ATM', 'Movimento': 'Cal. CH-4132 Automático', 'Reserva de Marcha': '65 horas', 'Bezel': 'Taquímetro em Cerâmica', 'Pulseira': 'Couro Alcântara' }
-    },
-    {
-      id: 10,
-      name: 'Lumière Rose',
-      collection: 'Série Lumière',
-      category: 'automatico',
-      ref: 'CHR-2024-L01',
-      price: 41800,
-      tagline: 'O ouro rosa como extensão da pele. Elegância que transcende o gênero.',
-      images: [
-        'https://images.unsplash.com/photo-1524592094714-0f0654e20314?w=800&q=80',
-        'https://images.unsplash.com/photo-1547996160-81dfa63595aa?w=800&q=80',
-        'https://images.unsplash.com/photo-1533139502658-0198f920d8e8?w=800&q=80',
-      ],
-      specs: { 'Material da Caixa': 'Ouro Rosa 18K', 'Diâmetro': '39mm', 'Espessura': '9.2mm', 'Resistência à Água': '50m / 5 ATM', 'Movimento': 'Cal. CH-9002 Automático', 'Reserva de Marcha': '60 horas', 'Vidro': 'Safira Bombê', 'Pulseira': 'Couro de Python' }
-    },
-    {
-      id: 11,
-      name: 'Nuit Étoilée',
-      collection: 'Série Nuit',
-      category: 'automatico',
-      ref: 'CHR-2024-N02',
-      price: 38900,
-      tagline: 'O céu estrelado gravado no mostrador. Astronomia e relojoaria em perfeita harmonia.',
-      images: [
-        'https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=800&q=80',
-        'https://images.unsplash.com/photo-1508057198894-247b23fe5ade?w=800&q=80',
-        'https://images.unsplash.com/photo-1524592094714-0f0654e20314?w=800&q=80',
-      ],
-      specs: { 'Material da Caixa': 'Aço Escovado', 'Diâmetro': '41mm', 'Espessura': '10.8mm', 'Resistência à Água': '100m / 10 ATM', 'Movimento': 'Cal. CH-3236 Automático', 'Reserva de Marcha': '70 horas', 'Mostrador': 'Météorite (Aerolite)', 'Pulseira': 'Couro Preto Cobalto' }
-    },
-    {
-      id: 12,
-      name: 'Pure Titanium',
-      collection: 'Série Pure',
-      category: 'automatico',
-      ref: 'CHR-2024-P02',
-      price: 18700,
-      tagline: 'Titânio grau aeroespacial. Leveza que desafia a presença, presença que desafia o tempo.',
-      images: [
-        'https://images.unsplash.com/photo-1508057198894-247b23fe5ade?w=800&q=80',
-        'https://images.unsplash.com/photo-1612817288484-6f916006741a?w=800&q=80',
-        'https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=800&q=80',
-      ],
-      specs: { 'Material da Caixa': 'Titânio Grau 23', 'Diâmetro': '40mm', 'Espessura': '8.6mm', 'Resistência à Água': '100m / 10 ATM', 'Movimento': 'Cal. CH-2825 Automático', 'Reserva de Marcha': '50 horas', 'Peso Total': '72g', 'Pulseira': 'Titânio Integrado' }
-    },
-    {
-      id: 13,
-      name: 'Aqua Profonde',
-      collection: 'Série Aqua',
-      category: 'automatico',
-      ref: 'CHR-2024-A02',
-      price: 29400,
-      tagline: 'Certificado para 1000 metros de profundidade. Onde a luz cessa, o CHRONOS brilha.',
-      images: [
-        'https://images.unsplash.com/photo-1547996160-81dfa63595aa?w=800&q=80',
-        'https://images.unsplash.com/photo-1524592094714-0f0654e20314?w=800&q=80',
-        'https://images.unsplash.com/photo-1533139502658-0198f920d8e8?w=800&q=80',
-      ],
-      specs: { 'Material da Caixa': 'Aço Super-LumiNova', 'Diâmetro': '44mm', 'Espessura': '15.2mm', 'Resistência à Água': '1000m / 100 ATM', 'Movimento': 'Cal. CH-3237 Automático', 'Reserva de Marcha': '70 horas', 'Válvula Hélio': 'Automática', 'Pulseira': 'Borracha Integrada' }
-    },
-    {
-      id: 14,
-      name: 'Monopusher Classic',
-      collection: 'Série Sport',
-      category: 'cronografo',
-      ref: 'CHR-2024-S04',
-      price: 44500,
-      tagline: 'Um só botão. Uma só decisão. A elegância do cronógrafo clássico em sua forma mais pura.',
-      images: [
-        'https://images.unsplash.com/photo-1612817288484-6f916006741a?w=800&q=80',
-        'https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=800&q=80',
-        'https://images.unsplash.com/photo-1547996160-81dfa63595aa?w=800&q=80',
-      ],
-      specs: { 'Material da Caixa': 'Ouro Amarelo 18K', 'Diâmetro': '40mm', 'Espessura': '13.0mm', 'Resistência à Água': '30m / 3 ATM', 'Movimento': 'Cal. CH-4133 Manual', 'Reserva de Marcha': '65 horas', 'Complicações': 'Cronógrafo Monopusher', 'Pulseira': 'Couro de Lagarto' }
-    },
-  ];
+  <div class="page" id="page-catalog">
+    <div class="catalog-hero">
+      <div>
+        <p style="font-size:9px;letter-spacing:5px;text-transform:uppercase;color:var(--gold);margin-bottom:16px">
+          Chronos Manufacture</p>
+        <h1>A <em>Coleção</em></h1>
+      </div>
+    </div>
+    <div class="catalog-filters">
+      <button class="filter-btn active" data-filter="all">Todos</button>
+      <button class="filter-btn" data-filter="automatico">Automático</button>
+      <button class="filter-btn" data-filter="cronografo">Cronógrafo</button>
+      <button class="filter-btn" data-filter="complication">Grande Complicação</button>
+    </div>
+    <div class="catalog-grid" id="catalogGrid"></div>
+    <div id="footer-catalog"></div>
+  </div>
 
-  const reviews = [
-    { author: 'Rafael M.', date: 'Janeiro 2024', text: 'Recebi meu Chronos Noir há 3 semanas e cada detalhe é uma obra-prima. O peso na mão, o tick suave, a qualidade do couro... Valeu absolutamente cada centavo.' },
-    { author: 'Camila S.', date: 'Fevereiro 2024', text: 'Comprei o Atelier Blanc para o meu marido como presente de aniversário. O serviço de entrega foi impecável, embalagem de luxo e o relógio é absolutamente magnífico.' },
-    { author: 'André P.', date: 'Março 2024', text: 'Colecionador há 15 anos. O Grand Complication é o melhor relógio que já tive. O tourbillon visível pelo caseback é de tirar o fôlego.' },
-  ];
-
-  // ========== CART ==========
-  let cart = JSON.parse(localStorage.getItem('chronos_cart') || '[]');
-
-  function saveCart() { localStorage.setItem('chronos_cart', JSON.stringify(cart)); }
-
-  function addToCart(productId) {
-    const existing = cart.find(i => i.id === productId);
-    if (existing) { existing.qty++; } else { cart.push({ id: productId, qty: 1 }); }
-    saveCart(); updateCartCount(); showToast('Produto adicionado ao carrinho');
-  }
-
-  function removeFromCart(productId) {
-    cart = cart.filter(i => i.id !== productId);
-    saveCart(); updateCartCount(); renderCart();
-  }
-
-  function changeQty(productId, delta) {
-    const item = cart.find(i => i.id === productId);
-    if (!item) return;
-    item.qty += delta;
-    if (item.qty <= 0) { removeFromCart(productId); return; }
-    saveCart(); updateCartCount(); renderCart();
-  }
-
-  function updateCartCount() {
-    const total = cart.reduce((s, i) => s + i.qty, 0);
-    const el = document.getElementById('cartCount');
-    el.textContent = total;
-    el.classList.remove('bump');
-    void el.offsetWidth;
-    el.classList.add('bump');
-  }
-
-  function cartTotal() {
-    return cart.reduce((s, i) => { const p = products.find(pr => pr.id === i.id); return s + (p ? p.price * i.qty : 0); }, 0);
-  }
-
-  function fmtPrice(n) { return 'R$ ' + n.toLocaleString('pt-BR'); }
-
-  // ========== NAVIGATE ==========
-  let currentPage = 'home';
-
-  function navigate(page, productId) {
-    document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-    document.getElementById('page-' + page).classList.add('active');
-    currentPage = page;
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-    if (page === 'catalog') renderCatalog('all');
-    if (page === 'cart') renderCart();
-    if (page === 'checkout') renderCheckout();
-    if (page === 'product' && productId !== undefined) renderProduct(productId);
-    initReveal();
-    renderFooters();
-  }
-
-  function openProduct(id) { navigate('product', id); }
-
-  // ========== RENDER CATALOG ==========
-  function renderCatalog(filter) {
-    const grid = document.getElementById('catalogGrid');
-    const filtered = filter === 'all' ? products : products.filter(p => p.category === filter);
-    grid.innerHTML = filtered.map(p => `
-      <div class="product-card" onclick="openProduct(${p.id})">
-        <div class="product-img-wrap">
-          <img src="${p.images[0]}" alt="${p.name}" loading="lazy">
-          <div class="product-quick">Ver Detalhes</div>
+  <div class="page" id="page-product">
+    <div class="product-page">
+      <div class="product-layout">
+        <div class="product-gallery">
+          <div class="gallery-main">
+            <img id="mainProductImg" src="" alt="">
+          </div>
+          <div class="gallery-thumbs" id="galleryThumbs"></div>
         </div>
-        <div class="product-info">
-          <p class="product-collection">${p.collection}</p>
-          <h3 class="product-name">${p.name}</h3>
-          <p class="product-ref">${p.ref}</p>
-          <p class="product-price">${fmtPrice(p.price)}</p>
-        </div>
-      </div>
-    `).join('');
-    document.querySelectorAll('.filter-btn').forEach(btn => {
-      btn.classList.toggle('active', btn.dataset.filter === filter);
-      btn.onclick = () => renderCatalog(btn.dataset.filter);
-    });
-  }
-
-  // ========== RENDER PRODUCT ==========
-  function renderProduct(id) {
-    const p = products[id];
-    if (!p) return;
-    document.getElementById('mainProductImg').src = p.images[0];
-    document.getElementById('breadcrumbName').textContent = p.name;
-    document.getElementById('productCollection').textContent = p.collection;
-    document.getElementById('productTitle').textContent = p.name;
-    document.getElementById('productRef').textContent = 'Ref. ' + p.ref;
-    document.getElementById('productPrice').textContent = fmtPrice(p.price);
-    document.getElementById('productInstall').textContent = 'ou 12× de ' + fmtPrice(Math.round(p.price / 12)) + ' sem juros';
-    document.getElementById('productTagline').textContent = p.tagline;
-    document.getElementById('addToCartBtn').onclick = () => addToCart(id);
-
-    const thumbs = document.getElementById('galleryThumbs');
-    thumbs.innerHTML = p.images.map((img, i) => `
-      <div class="gallery-thumb ${i===0?'active':''}" onclick="switchImg('${img}',this)">
-        <img src="${img}" alt="">
-      </div>
-    `).join('');
-
-    const specs = document.getElementById('specsGrid');
-    specs.innerHTML = Object.entries(p.specs).map(([k,v]) => `
-      <div class="spec-row"><span class="spec-key">${k}</span><span class="spec-val">${v}</span></div>
-    `).join('');
-
-    document.getElementById('reviewsContainer').innerHTML = reviews.map(r => `
-      <div class="review-item">
-        <div class="review-header"><span class="review-author">${r.author}</span><span class="review-date">${r.date}</span></div>
-        <div class="review-stars">★★★★★</div>
-        <p class="review-text">${r.text}</p>
-      </div>
-    `).join('');
-
-    document.querySelectorAll('.variant-btn').forEach(b => {
-      b.onclick = () => { document.querySelectorAll('.variant-btn').forEach(x => x.classList.remove('active')); b.classList.add('active'); };
-    });
-  }
-
-  function switchImg(src, el) {
-    document.getElementById('mainProductImg').src = src;
-    document.querySelectorAll('.gallery-thumb').forEach(t => t.classList.remove('active'));
-    el.classList.add('active');
-  }
-
-  // ========== RENDER CART ==========
-  function renderCart() {
-    const count = cart.reduce((s,i)=>s+i.qty,0);
-    document.getElementById('cartItemCount').textContent = count + (count === 1 ? ' item' : ' itens');
-    const el = document.getElementById('cartContent');
-    if (cart.length === 0) {
-      el.innerHTML = `<div class="empty-cart"><h2>Seu carrinho está vazio.</h2><p>Explore nossa coleção e encontre o relógio perfeito.</p><button class="btn-primary" onclick="navigate('catalog')"><span>Ver Coleção</span></button></div>`;
-      return;
-    }
-    const shipping = cartTotal() >= 20000 ? 0 : 350;
-    el.innerHTML = `
-      <div class="cart-layout">
-        <div class="cart-items">
-          ${cart.map(item => {
-            const p = products.find(pr => pr.id === item.id);
-            if (!p) return '';
-            return `<div class="cart-item">
-              <img class="cart-item-img" src="${p.images[0]}" alt="${p.name}">
+        <div class="product-details">
+          <p class="product-breadcrumb" onclick="navigate('catalog')">← <span>Coleção</span> / <span
+              id="breadcrumbName"></span></p>
+          <p class="product-collection-label" id="productCollection"></p>
+          <h1 class="product-title" id="productTitle"></h1>
+          <p class="product-ref-detail" id="productRef"></p>
+          <div class="product-rating">
+            <span class="stars">★★★★★</span>
+            <span class="rating-count">4.9 · 47 avaliações</span>
+          </div>
+          <div class="product-price-detail" id="productPrice"></div>
+          <p class="product-installment" id="productInstall"></p>
+          <blockquote class="product-tagline" id="productTagline"></blockquote>
+          <div class="product-variants">
+            <p class="variants-label">Pulseira</p>
+            <div class="variants-options">
+              <button class="variant-btn active">Couro</button>
+              <button class="variant-btn">Aço</button>
+              <button class="variant-btn">Borracha</button>
+            </div>
+          </div>
+          <button class="add-to-cart-btn" id="addToCartBtn">Adicionar ao Carrinho</button>
+          <button class="wishlist-btn">♡ Adicionar à Lista de Desejos</button>
+          <div class="product-benefits">
+            <div class="benefit-item"><span class="benefit-icon">◈</span>
               <div>
-                <p class="cart-item-name">${p.name}</p>
-                <p class="cart-item-ref">${p.collection} · ${p.ref}</p>
-                <p class="cart-item-price">${fmtPrice(p.price)}</p>
-                <div class="qty-control">
-                  <button class="qty-btn" onclick="changeQty(${p.id},-1)">−</button>
-                  <span class="qty-num">${item.qty}</span>
-                  <button class="qty-btn" onclick="changeQty(${p.id},1)">+</button>
-                </div>
+                <p class="benefit-title">Garantia Vitalícia</p>
+                <p class="benefit-text">Cobertura completa para toda a vida útil</p>
               </div>
-              <button class="remove-btn" onclick="removeFromCart(${p.id})">Remover</button>
-            </div>`;
-          }).join('')}
-        </div>
-        <div class="cart-summary">
-          <p class="summary-title">Resumo do Pedido</p>
-          <div class="summary-row"><span>Subtotal</span><span>${fmtPrice(cartTotal())}</span></div>
-          <div class="summary-row"><span>Frete</span><span>${shipping === 0 ? 'Grátis' : fmtPrice(shipping)}</span></div>
-          <div class="summary-total"><span>Total</span><span>${fmtPrice(cartTotal() + shipping)}</span></div>
-          <button class="btn-secondary" onclick="navigate('checkout')">Finalizar Compra</button>
-          <div style="text-align:center;margin-top:20px;font-size:10px;color:var(--muted)">
-            🔒 Pagamento 100% seguro · SSL 256-bit
+            </div>
+            <div class="benefit-item"><span class="benefit-icon">◈</span>
+              <div>
+                <p class="benefit-title">Frete Expresso</p>
+                <p class="benefit-text">Entrega em 3 dias úteis, grátis</p>
+              </div>
+            </div>
+            <div class="benefit-item"><span class="benefit-icon">◈</span>
+              <div>
+                <p class="benefit-title">Pagamento Seguro</p>
+                <p class="benefit-text">Criptografia SSL 256-bit</p>
+              </div>
+            </div>
+            <div class="benefit-item"><span class="benefit-icon">◈</span>
+              <div>
+                <p class="benefit-title">Troca Fácil</p>
+                <p class="benefit-text">30 dias para troca ou devolução</p>
+              </div>
+            </div>
+          </div>
+          <div class="specs-section">
+            <p class="specs-title">Especificações Técnicas</p>
+            <div class="specs-grid" id="specsGrid"></div>
+          </div>
+          <div class="reviews-section">
+            <p class="specs-title">Avaliações dos Clientes</p>
+            <div id="reviewsContainer"></div>
           </div>
         </div>
-      </div>`;
-  }
+      </div>
+    </div>
+    <div id="footer-product"></div>
+  </div>
 
-  // ========== RENDER CHECKOUT (SEM PAGAMENTO) ==========
-  function renderCheckout() {
-    if (cart.length === 0) {
-      document.getElementById('checkoutContent').innerHTML = `<div style="text-align:center;padding:80px 0"><h2 style="font-family:var(--font-serif);font-size:40px;color:var(--white);margin-bottom:20px">Carrinho Vazio</h2><p style="color:var(--muted);margin-bottom:40px">Adicione produtos antes de finalizar.</p><button class="btn-primary" onclick="navigate('catalog')"><span>Ver Coleção</span></button></div>`;
-      return;
-    }
-    const shipping = cartTotal() >= 20000 ? 0 : 350;
-    document.getElementById('checkoutContent').innerHTML = `
-      <div class="checkout-header"><h1>Finalizar<br>Compra</h1></div>
-      <div class="checkout-layout">
-        <form class="checkout-form" onsubmit="confirmOrder(event)">
-          <div class="form-section">
-            <p class="form-section-title">Informações Pessoais</p>
-            <div class="form-grid two">
-              <div class="form-group"><label class="form-label">Nome</label><input class="form-input" placeholder="Seu nome" required></div>
-              <div class="form-group"><label class="form-label">Sobrenome</label><input class="form-input" placeholder="Seu sobrenome" required></div>
+  <div class="page" id="page-cart">
+    <div class="cart-page">
+      <div class="cart-header">
+        <h1>Carrinho</h1>
+        <span class="cart-count-label" id="cartItemCount">0 itens</span>
+      </div>
+      <div id="cartContent"></div>
+    </div>
+    <div id="footer-cart"></div>
+  </div>
+
+  <div class="page" id="page-checkout">
+    <div class="checkout-page" id="checkoutContent"></div>
+    <div id="footer-checkout"></div>
+  </div>
+
+  <div class="page" id="page-about">
+    <div class="about-hero">
+      <div class="about-hero-bg"></div>
+      <div class="about-hero-overlay"></div>
+      <div class="about-hero-content">
+        <h1>A Arte do<br><em>Tempo Perfeito.</em></h1>
+      </div>
+    </div>
+    <div class="about-content">
+      <div class="about-intro reveal">
+        <div class="about-year">1987</div>
+        <div class="about-text">
+          <p>CHRONOS nasceu de uma obsessão: criar relógios que fossem simultaneamente instrumentos de precisão e obras
+            de arte.</p>
+          <p>Fundada em Genebra, nossa maison reuniu os mais talentosos relojoeiros suíços com designers de vanguarda. O
+            resultado é uma linha de peças que desafia as convenções do mercado de luxo.</p>
+          <p>Cada CHRONOS é montado manualmente por um único mestre relojoeiro, que assina o interior da caixa. Uma
+            tradição que mantemos desde o primeiro dia.</p>
+          <p>Produzimos apenas 500 peças por ano. Não por limitação, mas por princípio. A exclusividade não é um
+            argumento de marketing — é uma consequência natural do nosso compromisso com a perfeição.</p>
+        </div>
+      </div>
+      <div class="about-values">
+        <div class="about-value reveal">
+          <div class="about-value-icon">◈</div>
+          <h3 class="about-value-title">Precisão</h3>
+          <p class="about-value-text">Tolerâncias de ±0.3 segundos por dia. A física como arte.</p>
+        </div>
+        <div class="about-value reveal reveal-delay-1">
+          <div class="about-value-icon">◈</div>
+          <h3 class="about-value-title">Design</h3>
+          <p class="about-value-text">Linha limpa. Proporção áurea. Elegância que não envelhece.</p>
+        </div>
+        <div class="about-value reveal reveal-delay-2">
+          <div class="about-value-icon">◈</div>
+          <h3 class="about-value-title">Qualidade</h3>
+          <p class="about-value-text">Apenas materiais de grau aeroespacial. Sem compromissos.</p>
+        </div>
+        <div class="about-value reveal reveal-delay-3">
+          <div class="about-value-icon">◈</div>
+          <h3 class="about-value-title">Exclusividade</h3>
+          <p class="about-value-text">500 peças por ano. O seu CHRONOS é verdadeiramente único.</p>
+        </div>
+      </div>
+    </div>
+    <div id="footer-about"></div>
+  </div>
+
+  <div class="page" id="page-policies">
+    <div class="policies-page">
+      <div class="policies-tabs">
+        <button class="policy-tab active" onclick="switchPolicy('exchange',this)">Política de Troca</button>
+        <button class="policy-tab" onclick="switchPolicy('privacy',this)">Privacidade</button>
+      </div>
+      <div class="policy-content active" id="policy-exchange">
+        <h2>Política de Troca<br>e Devolução</h2>
+        <h3>Prazo para Troca</h3>
+        <p>CHRONOS oferece 30 dias corridos para solicitação de troca ou devolução a partir da data de recebimento do
+          produto. O relógio deve estar em perfeitas condições, com todos os itens originais: caixa, certificado de
+          autenticidade, garantia e manual.</p>
+        <h3>Condições Aceitas</h3>
+        <p>Aceitamos trocas por defeito de fabricação, divergência com o produto anunciado ou arrependimento de compra.
+          O produto não deve apresentar sinais de uso, arranhões ou danos causados pelo cliente.</p>
+        <h3>Processo de Devolução</h3>
+        <p>Para iniciar o processo, entre em contato com nossa equipe pelo e-mail <a href="/cdn-cgi/l/email-protection"
+            class="__cf_email__"
+            data-cfemail="1b7a6f7e757f72767e756f745b7873697475746835787476357969">[email&#160;protected]</a> ou pelo
+          telefone +55 11 3040-7000. Enviaremos uma etiqueta de coleta sem custo adicional ao cliente.</p>
+        <h3>Reembolso</h3>
+        <p>O reembolso será processado em até 10 dias úteis após o recebimento e inspeção do produto. Para compras no
+          cartão de crédito, o estorno pode levar até 2 faturas, dependendo da operadora.</p>
+        <h3>Garantia</h3>
+        <p>Todos os relógios CHRONOS possuem garantia vitalícia contra defeitos de fabricação. Essa garantia cobre o
+          movimento, a caixa e a resistência à água conforme especificado. Danos por impacto, mau uso ou intervenção de
+          terceiros não autorizados estão excluídos da garantia.</p>
+      </div>
+      <div class="policy-content" id="policy-privacy">
+        <h2>Política de<br>Privacidade</h2>
+        <h3>Coleta de Dados</h3>
+        <p>Coletamos apenas os dados estritamente necessários para processar sua compra e oferecer a melhor experiência
+          possível: nome, endereço de entrega, e-mail e dados de pagamento (processados com criptografia SSL 256-bit).
+        </p>
+        <h3>Uso das Informações</h3>
+        <p>Suas informações são utilizadas exclusivamente para processamento de pedidos, comunicação sobre o status de
+          entrega e, com seu consentimento, envio de informações sobre novas coleções e eventos exclusivos CHRONOS.</p>
+        <h3>Compartilhamento</h3>
+        <p>Não vendemos, alugamos ou compartilhamos seus dados com terceiros para fins comerciais. Compartilhamos
+          informações apenas com parceiros logísticos necessários para a entrega dos produtos.</p>
+        <h3>Seus Direitos (LGPD)</h3>
+        <p>Em conformidade com a Lei Geral de Proteção de Dados (LGPD), você tem direito a acessar, corrigir, excluir ou
+          exportar seus dados a qualquer momento. Para exercer esses direitos, entre em contato com <a
+            href="/cdn-cgi/l/email-protection" class="__cf_email__"
+            data-cfemail="49393b203f282a202d282d2c092a213b2627263a672a2624672b3b">[email&#160;protected]</a>.</p>
+        <h3>Cookies</h3>
+        <p>Utilizamos cookies essenciais para o funcionamento do site e cookies analíticos para melhorar a experiência.
+          Você pode gerenciar suas preferências de cookies a qualquer momento nas configurações do navegador.</p>
+      </div>
+    </div>
+    <div id="footer-policies"></div>
+  </div>
+
+  <div class="page" id="page-contact">
+    <div class="contact-page">
+      <div class="contact-layout">
+        <div class="contact-left">
+          <h1>Fale com<br>nossa <em>equipe.</em></h1>
+          <p>Nossa equipe de especialistas está disponível para responder suas dúvidas, auxiliar na escolha do relógio
+            perfeito ou agendar uma visita à nossa boutique.</p>
+          <div class="contact-info">
+            <div class="contact-info-item">
+              <span class="contact-info-label">Boutique</span>
+              <span class="contact-info-val">Av. Paulista, 1374 — São Paulo, SP</span>
             </div>
-            <div class="form-grid" style="margin-top:20px">
-              <div class="form-group"><label class="form-label">E-mail</label><input type="email" class="form-input" placeholder="seu@email.com" required></div>
-              <div class="form-group" style="margin-top:20px"><label class="form-label">Telefone</label><input class="form-input" placeholder="+55 (11) 00000-0000"></div>
+            <div class="contact-info-item">
+              <span class="contact-info-label">Telefone</span>
+              <span class="contact-info-val">+55 (11) 3040-7000</span>
+            </div>
+            <div class="contact-info-item">
+              <span class="contact-info-label">E-mail</span>
+              <span class="contact-info-val"><a href="/cdn-cgi/l/email-protection" class="__cf_email__"
+                  data-cfemail="d9b8adbcb7bdb0b4bcb7adb699bab1abb6b7b6aaf7bab6b4f7bbab">[email&#160;protected]</a></span>
+            </div>
+            <div class="contact-info-item">
+              <span class="contact-info-label">Horário</span>
+              <span class="contact-info-val">Seg–Sex: 10h às 19h · Sáb: 10h às 16h</span>
             </div>
           </div>
-          <div class="form-section">
-            <p class="form-section-title">Endereço de Entrega</p>
-            <div class="form-grid two">
-              <div class="form-group"><label class="form-label">CEP</label><input class="form-input" placeholder="00000-000" required></div>
-              <div class="form-group"><label class="form-label">Estado</label><select class="form-select"><option>São Paulo</option><option>Rio de Janeiro</option><option>Minas Gerais</option><option>Outro</option></select></div>
-            </div>
-            <div class="form-grid" style="margin-top:20px">
-              <div class="form-group"><label class="form-label">Endereço</label><input class="form-input" placeholder="Rua, número" required></div>
-              <div class="form-group" style="margin-top:20px"><label class="form-label">Complemento</label><input class="form-input" placeholder="Apto, sala..."></div>
-            </div>
+        </div>
+        <form class="contact-form" onsubmit="submitContact(event)">
+          <div class="form-group">
+            <label class="form-label">Nome completo</label>
+            <input type="text" class="form-input" placeholder="Seu nome" required>
           </div>
-          <!-- Seção de pagamento removida -->
-          <button class="checkout-submit" type="submit">Confirmar Pedido — ${fmtPrice(cartTotal() + shipping)}</button>
+          <div class="form-group">
+            <label class="form-label">E-mail</label>
+            <input type="email" class="form-input" placeholder="seu@email.com" required>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Telefone</label>
+            <input type="tel" class="form-input" placeholder="+55 (11) 00000-0000">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Assunto</label>
+            <select class="form-select">
+              <option>Dúvida sobre produto</option>
+              <option>Pedido em andamento</option>
+              <option>Visita à boutique</option>
+              <option>Assistência técnica</option>
+              <option>Outro</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Mensagem</label>
+            <textarea class="form-input" rows="5" placeholder="Como podemos ajudá-lo?"
+              style="resize:vertical"></textarea>
+          </div>
+          <button class="contact-submit" type="submit"><span>Enviar Mensagem</span></button>
         </form>
-        <div class="order-summary-box">
-          <p class="summary-title">Seu Pedido</p>
-          ${cart.map(item => { const p = products.find(pr => pr.id === item.id); if(!p) return ''; return `
-            <div class="order-item">
-              <img class="order-item-img" src="${p.images[0]}" alt="">
-              <div>
-                <p class="order-item-name">${p.name} × ${item.qty}</p>
-                <p class="order-item-price">${fmtPrice(p.price * item.qty)}</p>
-              </div>
-            </div>`; }).join('')}
-          <div class="summary-row" style="margin-top:20px"><span>Subtotal</span><span>${fmtPrice(cartTotal())}</span></div>
-          <div class="summary-row"><span>Frete</span><span>${shipping === 0 ? 'Grátis' : fmtPrice(shipping)}</span></div>
-          <div class="summary-total"><span>Total</span><span>${fmtPrice(cartTotal() + shipping)}</span></div>
-        </div>
-      </div>`;
-  }
-
-  function confirmOrder(e) {
-    e.preventDefault();
-    cart = []; saveCart(); updateCartCount();
-    document.getElementById('checkoutContent').innerHTML = `
-      <div class="order-confirmed">
-        <div class="confirmed-check">✓</div>
-        <h1 class="confirmed-title">Pedido Confirmado.</h1>
-        <p class="confirmed-sub">Obrigado por escolher CHRONOS. Seu relógio está sendo preparado com o cuidado que merece. Você receberá um e-mail com os detalhes de rastreamento em breve.</p>
-        <p style="font-size:11px;letter-spacing:2px;color:var(--gold);margin-bottom:40px">PRAZO ESTIMADO: 3 DIAS ÚTEIS</p>
-        <button class="btn-primary" onclick="navigate('home')"><span>Voltar ao Início</span></button>
-      </div>`;
-  }
-
-  // ========== FOOTER ==========
-  const footerHTML = `
-  <footer>
-    <div class="footer-top">
-      <div class="footer-brand">
-        <span class="nav-logo" onclick="navigate('home')">CHRONOS<span style="color:var(--gold)">.</span></span>
-        <p>Relógios de alta relojoaria, criados para durar gerações. Cada peça é um manifesto de precisão, design e exclusividade.</p>
-      </div>
-      <div>
-        <p class="footer-col-title">Navegação</p>
-        <ul class="footer-links">
-          <li><a onclick="navigate('home')">Início</a></li>
-          <li><a onclick="navigate('catalog')">Coleção</a></li>
-          <li><a onclick="navigate('about')">A Marca</a></li>
-          <li><a onclick="navigate('contact')">Contato</a></li>
-        </ul>
-      </div>
-      <div>
-        <p class="footer-col-title">Legal</p>
-        <ul class="footer-links">
-          <li><a onclick="navigate('policies')">Política de Troca</a></li>
-          <li><a onclick="navigate('policies')">Privacidade</a></li>
-        </ul>
-      </div>
-      <div>
-        <p class="footer-col-title">Contato</p>
-        <ul class="footer-links">
-          <li><a>Av. Paulista, 1374, SP</a></li>
-          <li><a>+55 (11) 3040-7000</a></li>
-          <li><a>atendimento@chronos.com.br</a></li>
-        </ul>
       </div>
     </div>
-    <div class="footer-bottom">
-      <p class="footer-copy">© 2024 CHRONOS Manufacture. Todos os direitos reservados.</p>
-      <div class="footer-socials">
-        <a>Instagram</a>
-        <a>LinkedIn</a>
-        <a>WhatsApp</a>
-      </div>
-    </div>
-  </footer>`;
+    <div id="footer-contact"></div>
+  </div>
 
-  function renderFooters() {
-    document.querySelectorAll('[id^="footer-"]').forEach(el => { el.innerHTML = footerHTML; });
-  }
-
-  // ========== POLICIES ==========
-  function switchPolicy(id, el) {
-    document.querySelectorAll('.policy-content').forEach(p => p.classList.remove('active'));
-    document.querySelectorAll('.policy-tab').forEach(t => t.classList.remove('active'));
-    document.getElementById('policy-' + id).classList.add('active');
-    el.classList.add('active');
-  }
-
-  // ========== CONTACT ==========
-  function submitContact(e) {
-    e.preventDefault();
-    showToast('Mensagem enviada com sucesso!');
-    e.target.reset();
-  }
-
-  // ========== TOAST ==========
-  let toastTimer;
-  function showToast(msg) {
-    const toast = document.getElementById('toast');
-    document.getElementById('toastText').textContent = msg;
-    toast.classList.add('show');
-    clearTimeout(toastTimer);
-    toastTimer = setTimeout(() => toast.classList.remove('show'), 3000);
-  }
-
-  // ========== CURSOR ==========
-  const isTouch = () => window.matchMedia('(pointer: coarse)').matches;
-  const cursor = document.getElementById('cursor');
-  const ring = document.getElementById('cursorRing');
-  let mx = 0, my = 0, rx = 0, ry = 0;
-
-  if (!isTouch()) {
-    document.addEventListener('mousemove', e => {
-      mx = e.clientX; my = e.clientY;
-      cursor.style.transform = `translate(${mx - 4}px, ${my - 4}px)`;
-    });
-    function animateRing() {
-      rx += (mx - rx - 18) * 0.12;
-      ry += (my - ry - 18) * 0.12;
-      ring.style.transform = `translate(${rx}px, ${ry}px)`;
-      requestAnimationFrame(animateRing);
-    }
-    animateRing();
-    document.querySelectorAll('button, a, .product-card, .featured-img-wrap, [onclick]').forEach(el => {
-      el.addEventListener('mouseenter', () => ring.classList.add('expand'));
-      el.addEventListener('mouseleave', () => ring.classList.remove('expand'));
-    });
-  }
-
-  // ========== NAV SCROLL ==========
-  window.addEventListener('scroll', () => {
-    document.getElementById('mainNav').classList.toggle('scrolled', window.scrollY > 60);
-    initReveal();
-  });
-
-  // ========== SCROLL REVEAL ==========
-  function initReveal() {
-    document.querySelectorAll('.reveal:not(.visible)').forEach(el => {
-      const rect = el.getBoundingClientRect();
-      if (rect.top < window.innerHeight - 80) el.classList.add('visible');
-    });
-  }
-
-  // ========== MOBILE MENU ==========
-  function openMobileMenu() {
-    document.getElementById('mobileMenu').classList.add('open');
-    document.body.style.overflow = 'hidden';
-  }
-  function closeMobileMenu() {
-    document.getElementById('mobileMenu').classList.remove('open');
-    document.body.style.overflow = '';
-  }
-
-  // ========== INIT ==========
-  updateCartCount();
-  renderFooters();
-  renderCatalog('all');
-  setTimeout(initReveal, 500);
-</script>
+  <script src="script.js"></script>
 
 </body>
+
 </html>
